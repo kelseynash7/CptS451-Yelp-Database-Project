@@ -5,8 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Milestone1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Milestone 1" Height="500" Width="420.208">
     <Grid>
-        
+        <GroupBox x:Name="groupBox" Header="State/City" HorizontalAlignment="Left" Height="116" Margin="10,10,0,0" VerticalAlignment="Top" Width="394">
+            <Grid HorizontalAlignment="Left" Height="83" Margin="10,6,-2,0" VerticalAlignment="Top" Width="374">
+                <Label x:Name="label" Content="State" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="60,14,0,0" VerticalAlignment="Top" Width="120"/>
+                <Label x:Name="label1" Content="City" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top"/>
+                <ComboBox x:Name="comboBox1" HorizontalAlignment="Left" Margin="60,51,0,0" VerticalAlignment="Top" Width="120"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="groupBox1" Header="Businesses" HorizontalAlignment="Left" Height="331" Margin="10,131,0,0" VerticalAlignment="Top" Width="394">
+            <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Height="291" Margin="10,10,0,0" VerticalAlignment="Top" Width="365"/>
+        </GroupBox>
+
     </Grid>
 </Window>
