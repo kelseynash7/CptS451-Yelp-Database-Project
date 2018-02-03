@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Npgsql;
 
 namespace Milestone1
@@ -21,6 +10,9 @@ namespace Milestone1
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// The Business class.
+        /// </summary>
         public class Business
         {
             public string name { get; set; }
@@ -28,11 +20,18 @@ namespace Milestone1
             public string city { get; set; }
         }
 
+        /// <summary>
+        /// Builder for string to connect to the database.
+        /// </summary>
+        /// <returns>string to connect to database.</returns>
         private string buildConnString()
         {
             return "Host=localhost; Username=postgres; Password=Abigail1; Database=business;";
         }
 
+        /// <summary>
+        /// Initialize the main window.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -41,6 +40,9 @@ namespace Milestone1
             addColumns2Grid();
         }
 
+        /// <summary>
+        /// Add the states from the database.
+        /// </summary>
         public void AddStates()
         {
             using (var comm = new NpgsqlConnection(buildConnString()))
@@ -62,6 +64,9 @@ namespace Milestone1
             }
         }
 
+        /// <summary>
+        /// Add the cities from the database.
+        /// </summary>
         public void AddCities()
         {
             using (var comm = new NpgsqlConnection(buildConnString()))
@@ -83,10 +88,14 @@ namespace Milestone1
             }
         }
 
+        /// <summary>
+        /// Add the cities from the database for the selected state.
+        /// </summary>
         public void AddCitiesWhenStateSelected()
         {
             using (var comm = new NpgsqlConnection(buildConnString()))
             {
+                cityList.Items.Clear();
                 comm.Open();
                 using (var cmd = new NpgsqlCommand())
                 {
@@ -105,7 +114,7 @@ namespace Milestone1
         }
 
         /// <summary>
-        /// Add the columns to the grid
+        /// Add the columns to the grid.
         /// </summary>
         public void addColumns2Grid()
         {
@@ -127,14 +136,13 @@ namespace Milestone1
         }
 
         /// <summary>
-        /// Add the businesses to the datagrid based on selected state
+        /// Add the businesses to the datagrid based on selected state.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void stateList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             businessGrid.Items.Clear();
-
             if (stateList.SelectedIndex > -1)
             {
                 using (var comm = new NpgsqlConnection(buildConnString()))
@@ -154,7 +162,6 @@ namespace Milestone1
                     }
                     comm.Close();
                 }
-                cityList.Items.Clear();
                 AddCitiesWhenStateSelected();
             }
         }
