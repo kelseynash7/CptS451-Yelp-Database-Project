@@ -173,10 +173,10 @@ namespace Milestone1
         /// <param name="e"></param>
         private void cityList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            businessGrid.Items.Clear();
-
+          
             if (cityList.SelectedIndex > -1)
             {
+                businessGrid.Items.Clear();
                 using (var comm = new NpgsqlConnection(buildConnString()))
                 {
                     comm.Open();
