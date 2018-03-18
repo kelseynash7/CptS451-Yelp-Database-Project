@@ -1,0 +1,15 @@
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\KelLynItTermProject.exe.config
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\KelLynItTermProject.exe
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\KelLynItTermProject.pdb
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csprojResolveAssemblyReference.cache
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\MainWindow.g.cs
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\App.g.cs
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject_MarkupCompile.cache
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject_MarkupCompile.lref
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\MainWindow.baml
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.g.resources
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.Properties.Resources.resources
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.GenerateResource.Cache
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.CoreCompileInputs.cache
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.exe
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.pdb
