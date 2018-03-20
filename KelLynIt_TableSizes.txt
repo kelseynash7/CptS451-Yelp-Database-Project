@@ -1,0 +1,7 @@
+Business: '11481'
+Categories: '33619'
+Checkins: '269628'
+Friends: '1052706'
+Hours: '55502'
+Review: '416479'
+Users: '192999'
