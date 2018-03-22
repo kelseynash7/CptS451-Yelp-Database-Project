@@ -21,8 +21,25 @@ namespace KelLynItTermProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Business class that stores all the variables for the business.
+        /// </summary>
         public class Business
         {
+            /// <summary>
+            /// 
+            /// </summary>
+            public string business_id { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string name { get; set; }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public string address { get; set; }
             /// <summary>
             /// state string.
             /// </summary>
@@ -39,11 +56,40 @@ namespace KelLynItTermProject
             public string zipcode { get; set; }
 
             /// <summary>
-            /// business category string.
+            /// latitude string.
             /// </summary>
-            public string businessCategory { get; set; }
+            public double latitude { get; set; }
 
-            public string name { get; set; }
+            /// <summary>
+            /// longitude string.
+            /// </summary>
+            public double longitude { get; set; }
+
+            /// <summary>
+            /// number of stars.
+            /// </summary>
+            public double stars { get; set; }
+
+            /// <summary>
+            /// number of reviews.
+            /// </summary>
+            public int reviewCount { get; set; }
+
+            /// <summary>
+            /// 1 for when business is open 0 for closed.
+            /// </summary>
+            public int isOpen { get; set; }
+
+            /// <summary>
+            /// number of check-ins.
+            /// </summary>
+            public int numCheckIns { get; set; }
+
+            /// <summary>
+            /// review rating.
+            /// </summary>
+            public double reviewRating { get; set; }
+
         }
 
         /// <summary>
@@ -84,7 +130,7 @@ namespace KelLynItTermProject
 
             DataGridTextColumn column3 = new DataGridTextColumn();
             column3.Header = "State";
-            column3.Binding = new Binding("state_code");
+            column3.Binding = new Binding("state");
             resultsGrid.Columns.Add(column3);
 
             DataGridTextColumn column4 = new DataGridTextColumn();
@@ -99,17 +145,17 @@ namespace KelLynItTermProject
 
             DataGridTextColumn column6 = new DataGridTextColumn();
             column6.Header = "# of Reviews";
-            column6.Binding = new Binding("reviews");
+            column6.Binding = new Binding("reviewCount");
             resultsGrid.Columns.Add(column6);
 
             DataGridTextColumn column7 = new DataGridTextColumn();
             column7.Header = "Avg Review Rating";
-            column7.Binding = new Binding("avgRating");
+            column7.Binding = new Binding("reviewRating");
             resultsGrid.Columns.Add(column7);
 
             DataGridTextColumn column8 = new DataGridTextColumn();
             column8.Header = "Total CheckIns";
-            column8.Binding = new Binding("numcheckins");
+            column8.Binding = new Binding("numCheckIns");
             resultsGrid.Columns.Add(column8);
         }
 
@@ -130,54 +176,6 @@ namespace KelLynItTermProject
                         while (reader.Read())
                         {
                             stateList.Items.Add(reader.GetString(0));
-                        }
-                    }
-                }
-                comm.Close();
-            }
-        }
-
-        /// <summary>
-        /// Add the cities from the database.
-        /// </summary>
-        public void AddCities()
-        {
-            using (var comm = new NpgsqlConnection(buildConnString()))
-            {
-                comm.Open();
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = comm;
-                    cmd.CommandText = "SELECT DISTINCT city FROM business ORDER BY city;";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            cityListBox.Items.Add(reader.GetString(0));
-                        }
-                    }
-                }
-                comm.Close();
-            }
-        }
-
-        /// <summary>
-        /// Add the zipcodes to the list box.
-        /// </summary>
-        public void AddZipCode()
-        {
-            using (var comm = new NpgsqlConnection(buildConnString()))
-            {
-                comm.Open();
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = comm;
-                    cmd.CommandText = "SELECT DISTINCT postal_code FROM business ORDER BY postal_code;";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            zipCodeListBox.Items.Add(reader.GetString(0));
                         }
                     }
                 }
@@ -248,7 +246,7 @@ namespace KelLynItTermProject
                 {
                     cmd.Connection = comm;
                     cmd.CommandText = "SELECT DISTINCT category_name FROM business, categories WHERE state_code = '" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
-                        "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() +"' and business.business_id = categories.business_id  ORDER BY category_name;";
+                        "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and business.business_id = categories.business_id  ORDER BY category_name;";
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -297,7 +295,7 @@ namespace KelLynItTermProject
         private void zipCodeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             resultsGrid.Items.Clear();
-            if(zipCodeListBox.SelectedIndex > -1)
+            if (zipCodeListBox.SelectedIndex > -1)
             {
                 AddBusinessCategoryWhenZipCodeSelected();
             }
@@ -310,9 +308,31 @@ namespace KelLynItTermProject
         /// <param name="e"></param>
         private void search_Click(object sender, RoutedEventArgs e)
         {
-            numBusinessesResult.Text = "";
             resultsGrid.Items.Clear();
-            
+
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() +"') a " +
+                        "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
+                        "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id; ";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            resultsGrid.Items.Add(new Business() { business_id = reader.GetString(0), name = reader.GetString(1), address = reader.GetString(2),
+                                city = reader.GetString(3), state = reader.GetString(4), zipcode = reader.GetString(5), latitude = reader.GetDouble(6),
+                                longitude = reader.GetDouble(7), stars = reader.GetDouble(8), reviewCount = reader.GetInt32(9), isOpen = reader.GetInt32(10),
+                                numCheckIns = reader.GetInt32(11), reviewRating = reader.GetDouble(12) });
+                        }
+                    }
+                }
+                comm.Close();
+            }
+            numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
         }
     }
 }

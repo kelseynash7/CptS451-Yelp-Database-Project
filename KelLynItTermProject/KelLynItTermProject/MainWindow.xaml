@@ -26,7 +26,7 @@
                     <GroupBox x:Name="businessCategory" Header="Business Category" HorizontalAlignment="Left" Height="480" Margin="0,282,0,0" VerticalAlignment="Top" Width="193">
                         <Grid HorizontalAlignment="Left" Height="464" Margin="-6,-7,-6,0" VerticalAlignment="Top" Width="193">
                             <ListBox x:Name="categoryListBox" HorizontalAlignment="Left" Height="274" Margin="10,10,0,0" VerticalAlignment="Top" Width="173"/>
-                            <Button x:Name="search" Content="Search Businesses" HorizontalAlignment="Left" Height="27" Margin="6,427,0,0" VerticalAlignment="Top" Width="177"/>
+                            <Button x:Name="search" Content="Search Businesses" HorizontalAlignment="Left" Height="27" Margin="6,427,0,0" VerticalAlignment="Top" Width="177" Click="search_Click"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="results" Header="Search Results" HorizontalAlignment="Left" Height="564" Margin="193,56,0,0" VerticalAlignment="Top" Width="948">
