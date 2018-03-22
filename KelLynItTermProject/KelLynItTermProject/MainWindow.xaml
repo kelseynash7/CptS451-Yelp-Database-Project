@@ -15,12 +15,12 @@
                 <Grid Background="#FFE5E5E5">
                     <GroupBox x:Name="Location" Header="Select Location" HorizontalAlignment="Left" Height="272" Margin="0,10,0,0" VerticalAlignment="Top" Width="193">
                         <Grid HorizontalAlignment="Left" Height="245" Margin="-1,4,-2,0" VerticalAlignment="Top" Width="184">
-                            <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Height="26" Margin="41,0,0,0" VerticalAlignment="Top" Width="133"/>
                             <Label x:Name="state" Content="State"></Label>
+                            <ComboBox x:Name="stateList" HorizontalAlignment="Left" Height="26" Margin="41,0,0,0" VerticalAlignment="Top" Width="133" SelectionChanged="stateList_SelectionChanged"/>
                             <Label x:Name="city" Content="City" HorizontalAlignment="Left" Height="27" Margin="0,31,0,0" VerticalAlignment="Top" Width="41"/>
-                            <ListBox x:Name="cityListBox" HorizontalAlignment="Left" Height="78" Margin="10,58,0,0" VerticalAlignment="Top" Width="164"/>
+                            <ListBox x:Name="cityListBox" HorizontalAlignment="Left" Height="78" Margin="10,58,0,0" VerticalAlignment="Top" Width="164" SelectionChanged="cityListBox_SelectionChanged"/>
                             <Label x:Name="zipCode" Content="Zipcode" HorizontalAlignment="Left" Height="27" Margin="0,146,0,0" VerticalAlignment="Top" Width="61"/>
-                            <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="64" Margin="10,173,0,0" VerticalAlignment="Top" Width="164"/>
+                            <ListBox x:Name="zipCodeListBox" HorizontalAlignment="Left" Height="64" Margin="10,173,0,0" VerticalAlignment="Top" Width="164" SelectionChanged="zipCodeListBox_SelectionChanged"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox x:Name="businessCategory" Header="Business Category" HorizontalAlignment="Left" Height="480" Margin="0,282,0,0" VerticalAlignment="Top" Width="193">

@@ -13,3 +13,8 @@
 \\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.CoreCompileInputs.cache
 \\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.exe
 \\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.pdb
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\Npgsql.dll
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\System.Threading.Tasks.Extensions.dll
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\Npgsql.xml
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\bin\Debug\System.Threading.Tasks.Extensions.xml
+\\Mac\Home\Documents\CptS451\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.CopyComplete

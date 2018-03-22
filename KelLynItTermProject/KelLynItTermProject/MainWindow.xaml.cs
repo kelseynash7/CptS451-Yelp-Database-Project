@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,12 +21,50 @@ namespace KelLynItTermProject
     /// </summary>
     public partial class MainWindow : Window
     {
+        public class Business
+        {
+            /// <summary>
+            /// state string.
+            /// </summary>
+            public string state { get; set; }
+
+            /// <summary>
+            /// city string.
+            /// </summary>
+            public string city { get; set; }
+
+            /// <summary>
+            /// zipcode string.
+            /// </summary>
+            public string zipcode { get; set; }
+
+            /// <summary>
+            /// business category string.
+            /// </summary>
+            public string businessCategory { get; set; }
+
+            public string name { get; set; }
+        }
+
+        /// <summary>
+        /// Builder for string to connect to the database.
+        /// </summary>
+        /// <returns>string to connect to database.</returns>
+        private string buildConnString()
+        {
+            return "Host=localhost; Username=postgres; Password=Abigail1; Database=projectTest;";
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+            AddStates();
             addColumns2Grid();
         }
 
+        /// <summary>
+        /// Add the columns to the business grid.
+        /// </summary>
         public void addColumns2Grid()
         {
             DataGridTextColumn column = new DataGridTextColumn();
@@ -45,7 +84,7 @@ namespace KelLynItTermProject
 
             DataGridTextColumn column3 = new DataGridTextColumn();
             column3.Header = "State";
-            column3.Binding = new Binding("state");
+            column3.Binding = new Binding("state_code");
             resultsGrid.Columns.Add(column3);
 
             DataGridTextColumn column4 = new DataGridTextColumn();
@@ -70,8 +109,210 @@ namespace KelLynItTermProject
 
             DataGridTextColumn column8 = new DataGridTextColumn();
             column8.Header = "Total CheckIns";
-            column8.Binding = new Binding("checkIns");
+            column8.Binding = new Binding("numcheckins");
             resultsGrid.Columns.Add(column8);
+        }
+
+        /// <summary>
+        /// Add the states to the state combo box.
+        /// </summary>
+        public void AddStates()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT state_code FROM business ORDER BY state_code";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            stateList.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        /// <summary>
+        /// Add the cities from the database.
+        /// </summary>
+        public void AddCities()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT city FROM business ORDER BY city;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            cityListBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        /// <summary>
+        /// Add the zipcodes to the list box.
+        /// </summary>
+        public void AddZipCode()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT postal_code FROM business ORDER BY postal_code;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            zipCodeListBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        /// <summary>
+        /// Add the cities from the database for the selected state.
+        /// </summary>
+        public void AddCitiesWhenStateSelected()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                cityListBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT city FROM business WHERE state_code = '" + stateList.SelectedItem.ToString() + "'ORDER BY city;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            cityListBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        /// <summary>
+        /// Add zip codes from database that are in selected city.
+        /// </summary>
+        public void AddZipCodesWhenCitySelected()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                zipCodeListBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT postal_code FROM business WHERE state_code = '" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' ORDER BY postal_code;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            zipCodeListBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        /// <summary>
+        /// Add the business categories from the database that are in the selected zipcode. 
+        /// </summary>
+        public void AddBusinessCategoryWhenZipCodeSelected()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                categoryListBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT category_name FROM business, categories WHERE state_code = '" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
+                        "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() +"' and business.business_id = categories.business_id  ORDER BY category_name;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            categoryListBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        /// <summary>
+        /// add cities to the list when a state is selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void stateList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            resultsGrid.Items.Clear();
+            if (stateList.SelectedIndex > -1)
+            {
+                AddCitiesWhenStateSelected();
+            }
+        }
+
+        /// <summary>
+        /// add zip codes to the list when a city is selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cityListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            resultsGrid.Items.Clear();
+            if (cityListBox.SelectedIndex > -1)
+            {
+                AddZipCodesWhenCitySelected();
+            }
+        }
+
+        /// <summary>
+        /// add business categories to the list when a zipcode is selected.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void zipCodeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            resultsGrid.Items.Clear();
+            if(zipCodeListBox.SelectedIndex > -1)
+            {
+                AddBusinessCategoryWhenZipCodeSelected();
+            }
+        }
+
+        /// <summary>
+        /// get the businesses that have the selected category in the selected state, city, and zipcode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void search_Click(object sender, RoutedEventArgs e)
+        {
+            numBusinessesResult.Text = "";
+            resultsGrid.Items.Clear();
+            
         }
     }
 }
