@@ -47,25 +47,52 @@ EXECUTE PROCEDURE updateReviewRating()
 
 	
 -- Update business number of checkins on insert into checkins
-CREATE OR REPLACE FUNCTION updateCheckin()
+CREATE OR REPLACE FUNCTION updateBusCheckin()
 RETURNS TRIGGER AS
 $$
 BEGIN
 	UPDATE Business
-    SET Business.numcheckins = Business.numcheckins + 1
+    SET numcheckins = Business.numcheckins + NEW.num_checkins
     WHERE Business.business_id = NEW.business_id;
-
+	RETURN NEW;
 END;
 $$
 LANGUAGE 'plpgsql'
 
 CREATE TRIGGER updateBusCheckins
-	AFTER INSERT
+	AFTER INSERT OR UPDATE
     ON checkins
     FOR EACH ROW
-    EXECUTE PROCEDURE updateCheckin();
-WHERE checkins.business_id = NEW.business_id;
+    EXECUTE PROCEDURE updateBusCheckin();
 
+-- update checkins if record already exists
+create or replace function updateCheckin()
+RETURNS trigger AS
+$$
+BEGIN
+	IF (Exists (Select checkins.business_id, checkins.day, checkins.start_time
+               FROM checkins
+               WHERE checkins.business_id = NEW.business_id AND checkins.day = NEW.day 
+                AND checkins.start_time = NEW.start_time))
+    THEN
+    	UPDATE checkins
+        Set num_checkins = checkins.num_checkins + NEW.num_checkins
+        WHERE checkins.business_id = NEW.business_id AND checkins.day = NEW.day AND checkins.start_time = NEW.start_time;
+        RETURN NULL;
+    ELSE
+    	INSERT INTO checkins 
+        VALUES (new.day, new.start_time, new.num_checkins, new.business_id);
+        RETURN NEW;
+    END IF;  
+END;
+$$
+language 'plpgsql'
+
+
+CREATE TRIGGER updateCheckins
+BEFORE INSERT ON checkins
+FOR EACH ROW
+EXECUTE PROCEDURE updateCheckin()
 
 --customers can only write reviews for open businesses (1)
 CREATE OR REPLACE FUNCTION stopReview()
@@ -97,6 +124,10 @@ VALUES ('j2810sk384hsk18260jsgu', 'g3V76Ja0XgWS1rqx0gxL_A', '2eJEUJIP54tex7T9YOc
 -- Checkin increments business's num_checkin 
 Insert into checkins
 values ('Wednesday', 'morning', 1, 'VT5Eh1ksIng56j2YwYbHVg')
+
+OR
+insert into checkins 
+values ('Sunday', 'night', 1, 'MtjwVcFHvtogmJZ7De8M9Q')
 
 --Try to review a business that is not open 
 INSERT INTO review
