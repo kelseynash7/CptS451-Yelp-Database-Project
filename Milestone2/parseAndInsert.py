@@ -20,7 +20,7 @@ def insert2BusinessTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigal1'")
+            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -30,7 +30,7 @@ def insert2BusinessTable():
             #Generate the INSERT statement for the current business hours
             # include values for all hoursTable attributes
 
-            sql_str = "INSERT INTO hours (business_id, name, address,city, state_code, postal_code, latitude, longitude, stars, reviewcount, is_open, numcheckins, reviewrating) " \
+            sql_str = "INSERT INTO business (business_id, name, address,city, state_code, postal_code, latitude, longitude, stars, reviewcount, is_open, numcheckins, reviewrating) " \
                       "VALUES ('" + cleanStr4SQL(data['business_id']) + "','" + cleanStr4SQL(data["name"]) + "','" + cleanStr4SQL(data["address"]) + "','" + \
                       cleanStr4SQL(data["city"]) + "','" + cleanStr4SQL(data["state"]) + "','" + cleanStr4SQL(data["postal_code"]) + "'," + str(data["latitude"]) + "," + \
                       str(data["longitude"]) + "," + str(data["stars"]) + "," + str(data["review_count"]) + "," + str(data["is_open"])  + ",0 ,0"+ ");"
@@ -346,10 +346,10 @@ def insert2FriendTable():
     outfile.close() 
     f.close()
 
-#insert2BusinessTable()
-#insert2HoursTable()
-#insert2CategoryTable()
-#insert2UsersTable()
-#insert2CheckinsTable()
-#insert2ReviewTable()
+insert2BusinessTable()
+insert2HoursTable()
+insert2CategoryTable()
+insert2UsersTable()
+insert2CheckinsTable()
+insert2ReviewTable()
 insert2FriendTable()
