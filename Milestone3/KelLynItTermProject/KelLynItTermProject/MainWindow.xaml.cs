@@ -130,6 +130,7 @@ namespace KelLynItTermProject
             AddColumns2FriendsGrid();
             AddColumns2ReviewsGrid();
             addColumns2BusinessGrid();
+            AddChoicesToSortComboBox();
         }
 
         /// <summary>
@@ -204,6 +205,9 @@ namespace KelLynItTermProject
             FriendsDataGrid.Columns.Add(yelpingSince);
         }
 
+        /// <summary>
+        /// Adds the columns to the reviews grid.
+        /// </summary>
         public void AddColumns2ReviewsGrid()
         {
             DataGridTextColumn userName = new DataGridTextColumn();
@@ -225,6 +229,19 @@ namespace KelLynItTermProject
             text.Header = "Text";
             text.Binding = new Binding("ReviewText");
             ReviewsByFriendsDataGrid.Columns.Add(text);
+        }
+
+        /// <summary>
+        /// Adds the choices for sorting the business results.
+        /// </summary>
+        public void AddChoicesToSortComboBox()
+        {
+            sortComboBox.Items.Add("Name (default)");
+            sortComboBox.Items.Add("Highest rating (stars)");
+            sortComboBox.Items.Add("Most Reviewed");
+            sortComboBox.Items.Add("Best Review Rating (highest avg review rating)");
+            sortComboBox.Items.Add("Most Check-Ins");
+            sortComboBox.Items.Add("Nearest");
         }
 
         /// <summary>
@@ -377,6 +394,7 @@ namespace KelLynItTermProject
         private void search_Click(object sender, RoutedEventArgs e)
         {
             resultsGrid.Items.Clear();
+            StringBuilder sb = new StringBuilder();
 
             using (var comm = new NpgsqlConnection(buildConnString()))
             {
@@ -384,7 +402,22 @@ namespace KelLynItTermProject
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = comm;
-                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "') a " +
+                    if (selectedCategoriesListBox.Items.Count >= 1)
+                    {
+                        sb.Append("WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "' "); 
+                        for(int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
+                        {
+                            sb.Append("OR category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "' ");
+                        }
+                    }
+                    else
+                    {
+                        sb.Append("Where category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
+                    }
+
+                    string builtString = sb.ToString();
+
+                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID FROM categories " + builtString + ") a " +
                         "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
                         "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id; ";
                     using (var reader = cmd.ExecuteReader())
@@ -411,6 +444,7 @@ namespace KelLynItTermProject
                     }
                 }
                 comm.Close();
+                sb.Clear();
             }
             numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
         }
@@ -495,6 +529,21 @@ namespace KelLynItTermProject
                     comm.Close();
                 }
             }
+        }
+
+        private void addButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedCategoriesListBox.Items.Add(categoryListBox.SelectedItem.ToString());
+        }
+
+        private void removeButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectedCategoriesListBox.Items.Remove(categoryListBox.SelectedItem.ToString());
+        }
+
+        private void sortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

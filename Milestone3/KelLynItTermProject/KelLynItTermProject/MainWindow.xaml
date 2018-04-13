@@ -71,8 +71,8 @@
                         <Grid HorizontalAlignment="Left" Height="464" Margin="-6,-7,-6,0" VerticalAlignment="Top" Width="193">
                             <ListBox x:Name="categoryListBox" HorizontalAlignment="Left" Height="274" Margin="10,10,0,0" VerticalAlignment="Top" Width="173"/>
                             <Button x:Name="search" Content="Search Businesses" HorizontalAlignment="Left" Height="27" Margin="6,427,0,0" VerticalAlignment="Top" Width="177" Click="search_Click"/>
-                            <Button x:Name="addButton" Content="Add" HorizontalAlignment="Left" Margin="10,289,0,0" VerticalAlignment="Top" Width="75"/>
-                            <Button x:Name="removeButton" Content="Remove" HorizontalAlignment="Left" Margin="90,289,0,0" VerticalAlignment="Top" Width="93" RenderTransformOrigin="-0.14,-0.875"/>
+                            <Button x:Name="addButton" Content="Add" HorizontalAlignment="Left" Margin="10,289,0,0" VerticalAlignment="Top" Width="75" Click="addButton_Click"/>
+                            <Button x:Name="removeButton" Content="Remove" HorizontalAlignment="Left" Margin="90,289,0,0" VerticalAlignment="Top" Width="93" RenderTransformOrigin="-0.14,-0.875" Click="removeButton_Click"/>
                             <ListBox x:Name="selectedCategoriesListBox" HorizontalAlignment="Left" Height="100" Margin="10,314,0,0" VerticalAlignment="Top" Width="173"/>
                         </Grid>
                     </GroupBox>
@@ -126,7 +126,7 @@
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Sort Results By:" HorizontalAlignment="Left" Height="71" Margin="1146,467,0,0" VerticalAlignment="Top" Width="338">
-                        <ComboBox HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="302"/>
+                        <ComboBox x:Name="sortComboBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="302" SelectionChanged="sortComboBox_SelectionChanged"/>
                     </GroupBox>
                     <GroupBox HorizontalAlignment="Left" Height="219" Margin="1151,543,0,0" VerticalAlignment="Top" Width="333">
                         <StackPanel HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="323" Margin="0,25,-2,-6">
