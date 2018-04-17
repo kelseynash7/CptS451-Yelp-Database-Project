@@ -20,7 +20,7 @@ def insert2BusinessTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -76,7 +76,7 @@ def insert2HoursTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -116,7 +116,7 @@ def insert2CategoryTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -157,7 +157,7 @@ def insert2UsersTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -191,6 +191,7 @@ def insert2UsersTable():
 
 # Helper parses nested checkin (time) structure and aggregates
 def parseCheckins(checkIns):
+    final = {}
     Weekly = []
     six = datetime.strptime("06:00", "%M:%S")
     twelve = datetime.strptime("12:00", "%M:%S")
@@ -215,12 +216,10 @@ def parseCheckins(checkIns):
             elif (realtime >= eleven or  realtime < six):
                 NI += int(checkIns.get(day).get(time))
 
-        Weekly.append((day, "morning", AM))
-        Weekly.append((day, "afternoon", AN))
-        Weekly.append((day, "evening", EV))
-        Weekly.append((day, "night", NI))        
-        
-    return Weekly
+        Weekly = [str(AM), str(AN), str(EV), str(NI)]
+        final[day] = Weekly
+              
+    return final
 
 def insert2CheckinsTable():
     with open('.//yelp_dataset//yelp_checkin.JSON','r') as f:    
@@ -230,7 +229,7 @@ def insert2CheckinsTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -242,20 +241,22 @@ def insert2CheckinsTable():
 
             #Generate the INSERT statement for the current checkin data/business
             # include values for all checkinsTable attributes
-            for val in checkins:
-                sql_str = "INSERT INTO Checkins (day, start_time, num_checkins, business_id) " \
-                          "VALUES ('" + str(val[0]) + "', '" + str(val[1]) + "', '" + str(val[2]) + "', '"  + data['business_id'] + "');"
+            for day in checkins.keys():
+                var = checkins.get(day)
+                sql_str = "INSERT INTO checkins (day, business_id, morning, afternoon, evening, night) " \
+                      "VALUES ('" + str(day) + "', '" + data['business_id'] +"', '" + str(var[0]) + "', '" + str(var[1]) + "', '"  + str(var[2]) + "', '" + str(var[3]) + "');"
                 
                 try:
                     cur.execute(sql_str)
                 except:
-                    print("Insert to checkinTABLE failed!" + " " + data['business_id'] + " " + str(val))
+                    print("Insert to checkinTABLE failed!" + " " + data['business_id'] + " " + str(checkins[0]))
                 conn.commit()
                 # write the INSERT statement to a file.
                 outfile.write(sql_str + '\n')
+                count_line +=1
 
             line = f.readline()
-            count_line +=1
+            
 
         cur.close()
         conn.close()
@@ -273,7 +274,7 @@ def insert2ReviewTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -314,7 +315,7 @@ def insert2FriendTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='projectTest' user='postgres' host='localhost' password='Abigail1'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -346,10 +347,10 @@ def insert2FriendTable():
     outfile.close() 
     f.close()
 
-insert2BusinessTable()
-insert2HoursTable()
-insert2CategoryTable()
-insert2UsersTable()
-insert2CheckinsTable()
+#insert2BusinessTable()
+#insert2HoursTable()
+#insert2CategoryTable()
+#insert2UsersTable()
+#insert2CheckinsTable()
 insert2ReviewTable()
-insert2FriendTable()
+#insert2FriendTable()
