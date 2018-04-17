@@ -52,7 +52,7 @@ RETURNS TRIGGER AS
 $$
 BEGIN
 	UPDATE Business
-    SET numcheckins = Business.numcheckins + NEW.num_checkins
+    SET numcheckins = NEW.morning + NEW.afternoon + NEW.evening + NEW.night
     WHERE Business.business_id = NEW.business_id;
 	RETURN NEW;
 END;
@@ -64,35 +64,6 @@ CREATE TRIGGER updateBusCheckins
     ON checkins
     FOR EACH ROW
     EXECUTE PROCEDURE updateBusCheckin();
-
--- update checkins if record already exists
-create or replace function updateCheckin()
-RETURNS trigger AS
-$$
-BEGIN
-	IF (Exists (Select checkins.business_id, checkins.day, checkins.start_time
-               FROM checkins
-               WHERE checkins.business_id = NEW.business_id AND checkins.day = NEW.day 
-                AND checkins.start_time = NEW.start_time))
-    THEN
-    	UPDATE checkins
-        Set num_checkins = checkins.num_checkins + NEW.num_checkins
-        WHERE checkins.business_id = NEW.business_id AND checkins.day = NEW.day AND checkins.start_time = NEW.start_time;
-        RETURN NULL;
-    ELSE
-    	INSERT INTO checkins 
-        VALUES (new.day, new.start_time, new.num_checkins, new.business_id);
-        RETURN NEW;
-    END IF;  
-END;
-$$
-language 'plpgsql'
-
-
-CREATE TRIGGER updateCheckins
-BEFORE INSERT ON checkins
-FOR EACH ROW
-EXECUTE PROCEDURE updateCheckin()
 
 --customers can only write reviews for open businesses (1)
 CREATE OR REPLACE FUNCTION stopReview()
