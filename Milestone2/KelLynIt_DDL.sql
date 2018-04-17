@@ -40,10 +40,12 @@ CREATE TABLE Users (
 	
 CREATE TABLE Checkins (
 	day				VARCHAR(10),
-	start_time		VARCHAR(15),
-	num_checkins	INTEGER,
 	business_id		VARCHAR(22),
-	PRIMARY KEY (day, start_time, business_id),
+	morning			INTEGER,
+	afternoon		INTEGER,
+	evening			INTEGER,
+	night			INTEGER,
+	PRIMARY KEY (day, business_id),
 	FOREIGN KEY (business_id) REFERENCES Business (business_id));
 	
 CREATE TABLE Review (
