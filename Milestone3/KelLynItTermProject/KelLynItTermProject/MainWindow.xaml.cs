@@ -511,7 +511,7 @@ namespace KelLynItTermProject
                         }
                         cmd.CommandText = "SELECT users.name, business.name, business.city, review.text FROM users, business, review, (SELECT distinct user_id " +
                             "FROM users, (SELECT DISTINCT friend_id FROM friends WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id) as b " +
-                            "WHERE b.user_id = users.user_id and business.business_id = review.business_id and review.user_id = b.user_id ORDER BY users.name;";
+                            "WHERE b.user_id = users.user_id and business.business_id = review.business_id and review.user_id = b.user_id ORDER BY review.date desc;";
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
