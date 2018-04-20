@@ -50,7 +50,7 @@
                             <TextBox x:Name="UserLongitudeTextBox" HorizontalAlignment="Left" Height="24" Margin="152,75,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="165"/>
                             <Label Content="Latitude:" HorizontalAlignment="Left" Margin="83,31,0,0" VerticalAlignment="Top" Width="64" RenderTransformOrigin="0.641,-0.385"/>
                             <Label Content="Longitude:" HorizontalAlignment="Left" Margin="83,75,0,0" VerticalAlignment="Top" Width="64"/>
-                            <Button Content="Set Location" HorizontalAlignment="Left" Margin="152,106,0,0" VerticalAlignment="Top" Width="140" Height="28"/>
+                            <Button x:Name="setLocationButton" Content="Set Location" HorizontalAlignment="Left" Margin="152,106,0,0" VerticalAlignment="Top" Width="140" Height="28" Click="setLocationButton_Click"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
@@ -80,7 +80,7 @@
                         <Grid HorizontalAlignment="Left" Height="548" Margin="-6,-7,-2,0" VerticalAlignment="Top" Width="944">
                             <Label x:Name="numBusinesses" Content="# of Businesses" HorizontalAlignment="Left" Height="26" Margin="0,10,0,0" VerticalAlignment="Top" Width="114"/>
                             <TextBox x:Name="numBusinessesResult" HorizontalAlignment="Left" Height="18" Margin="97,14,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="97"/>
-                            <DataGrid x:Name="resultsGrid" HorizontalAlignment="Left" Height="497" Margin="10,41,0,0" VerticalAlignment="Top" Width="924"/>
+                            <DataGrid x:Name="resultsGrid" HorizontalAlignment="Left" Height="497" Margin="10,41,0,0" VerticalAlignment="Top" Width="924" SelectionChanged="resultsGrid_SelectionChanged"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Open Businesses" HorizontalAlignment="Left" Height="61" Margin="193,10,0,0" VerticalAlignment="Top" Width="953">
@@ -93,32 +93,10 @@
                             <ComboBox x:Name="toTimeComboBox" HorizontalAlignment="Left" Margin="515,10,0,0" VerticalAlignment="Top" Width="120"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Header="Filter by Price:" HorizontalAlignment="Left" Height="100" Margin="1151,10,0,0" VerticalAlignment="Top" Width="333">
-                        <StackPanel HorizontalAlignment="Left" Height="60" Margin="10,10,0,0" VerticalAlignment="Top" Width="300">
-                            <CheckBox Content="$"/>
-                            <CheckBox Content="$$"/>
-                            <CheckBox Content="$$$"/>
-                            <CheckBox Content="$$$$"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Filter by Attributes:" HorizontalAlignment="Left" Height="183" Margin="1151,115,0,0" VerticalAlignment="Top" Width="333">
-                        <StackPanel HorizontalAlignment="Left" Height="163" VerticalAlignment="Top" Width="313" Margin="10,10,-2,-12">
-                            <CheckBox Content="Accepts Credit Cards"/>
-                            <CheckBox Content="Takes Reservations"/>
-                            <CheckBox Content="Wheelchair Accessible"/>
-                            <CheckBox Content="Outdoor Seating"/>
-                            <CheckBox Content="Good for Kids"/>
-                            <CheckBox Content="Good for Groups"/>
-                            <CheckBox Content="Delivery"/>
-                            <CheckBox Content="Take Out"/>
-                            <CheckBox Content="Free Wi-Fi"/>
-                            <CheckBox Content="Bike Parking"/>
-                        </StackPanel>
-                    </GroupBox>
                     <GroupBox Header="Selected Business" HorizontalAlignment="Left" Height="122" Margin="193,640,0,0" VerticalAlignment="Top" Width="953">
                         <Grid HorizontalAlignment="Left" Height="112" VerticalAlignment="Top" Width="943" Margin="0,0,-2,-12">
-                            <TextBox HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="Business Name" VerticalAlignment="Top" Width="696"/>
-                            <TextBox HorizontalAlignment="Left" Height="57" Margin="10,38,0,0" TextWrapping="Wrap" Text="&lt;&lt;review text&gt;&gt;" VerticalAlignment="Top" Width="696"/>
+                            <TextBox x:Name="selectedBusiness" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="Business Name" VerticalAlignment="Top" Width="696"/>
+                            <TextBox x:Name="reviewText" HorizontalAlignment="Left" Height="57" Margin="10,38,0,0" TextWrapping="Wrap" Text="&lt;&lt;review text&gt;&gt;" VerticalAlignment="Top" Width="696"/>
                             <Button x:Name="checkinButton" Content="Checkin" HorizontalAlignment="Left" Margin="796,10,0,0" VerticalAlignment="Top" Width="120"/>
                             <Label Content="Rating:" HorizontalAlignment="Left" Margin="752,38,0,0" VerticalAlignment="Top"/>
                             <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Margin="796,38,0,0" VerticalAlignment="Top" Width="120"/>
@@ -133,16 +111,6 @@
                             <Button Content="Show CheckIns" Height="50"/>
                             <Button Content="Show Reviews" Height="50"/>
                             <Button Content="#of Businesses per Zipcode" Height="50"/>
-                        </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Filter by Meal:" HorizontalAlignment="Left" Height="159" Margin="1151,303,0,0" VerticalAlignment="Top" Width="333">
-                        <StackPanel HorizontalAlignment="Left" Height="121" Margin="10,10,-2,0" VerticalAlignment="Top" Width="313">
-                            <CheckBox Content="Breakfast"/>
-                            <CheckBox Content="Brunch"/>
-                            <CheckBox Content="Lunch"/>
-                            <CheckBox Content="Dinner"/>
-                            <CheckBox Content="Dessert"/>
-                            <CheckBox Content="Late Night"/>
                         </StackPanel>
                     </GroupBox>
                 </Grid>
