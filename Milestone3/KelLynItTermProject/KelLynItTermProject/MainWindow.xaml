@@ -97,10 +97,10 @@
                         <Grid HorizontalAlignment="Left" Height="112" VerticalAlignment="Top" Width="943" Margin="0,0,-2,-12">
                             <TextBox x:Name="selectedBusiness" HorizontalAlignment="Left" Height="23" Margin="10,10,0,0" TextWrapping="Wrap" Text="Business Name" VerticalAlignment="Top" Width="696"/>
                             <TextBox x:Name="reviewText" HorizontalAlignment="Left" Height="57" Margin="10,38,0,0" TextWrapping="Wrap" Text="&lt;&lt;review text&gt;&gt;" VerticalAlignment="Top" Width="696"/>
-                            <Button x:Name="checkinButton" Content="Checkin" HorizontalAlignment="Left" Margin="796,10,0,0" VerticalAlignment="Top" Width="120"/>
+                            <Button x:Name="checkinButton" Content="Checkin" HorizontalAlignment="Left" Margin="796,10,0,0" VerticalAlignment="Top" Width="120" Click="checkinButton_Click"/>
                             <Label Content="Rating:" HorizontalAlignment="Left" Margin="752,38,0,0" VerticalAlignment="Top"/>
-                            <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Margin="796,38,0,0" VerticalAlignment="Top" Width="120"/>
-                            <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="796,69,0,0" VerticalAlignment="Top" Width="120" Height="26"/>
+                            <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Margin="796,0,0,52" VerticalAlignment="Bottom" Width="120" SelectionChanged="ratingComboBox_SelectionChanged"/>
+                            <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="796,69,0,0" VerticalAlignment="Top" Width="120" Height="26" Click="addReviewButton_Click"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Sort Results By:" HorizontalAlignment="Left" Height="71" Margin="1146,467,0,0" VerticalAlignment="Top" Width="338">
@@ -109,8 +109,8 @@
                     <GroupBox HorizontalAlignment="Left" Height="219" Margin="1151,543,0,0" VerticalAlignment="Top" Width="333">
                         <StackPanel HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="323" Margin="0,25,-2,-6">
                             <Button x:Name="checkinsButton" Content="Show CheckIns" Height="50" Click="checkinsButton_Click"/>
-                            <Button Content="Show Reviews" Height="50"/>
-                            <Button Content="#of Businesses per Zipcode" Height="50"/>
+                            <Button x:Name="showReviewsButton" Content="Show Reviews" Height="50" Click="showReviewsButton_Click"/>
+                            <Button x:Name="busPerZipCodeButton" Content="#of Businesses per Zipcode" Height="50" Click="busPerZipCodeButton_Click"/>
                         </StackPanel>
                     </GroupBox>
                 </Grid>
