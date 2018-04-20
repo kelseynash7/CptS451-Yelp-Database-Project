@@ -86,11 +86,11 @@
                     <GroupBox Header="Open Businesses" HorizontalAlignment="Left" Height="61" Margin="193,10,0,0" VerticalAlignment="Top" Width="953">
                         <Grid HorizontalAlignment="Left" Height="50" Margin="10,1,-2,-12" VerticalAlignment="Top" Width="933">
                             <Label Content="Day of Week" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                            <ComboBox x:Name="dayComboBox" HorizontalAlignment="Left" Margin="92,10,0,0" VerticalAlignment="Top" Width="120"/>
+                            <ComboBox x:Name="dayComboBox" HorizontalAlignment="Left" Margin="92,10,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="dayComboBox_SelectionChanged"/>
                             <Label Content="From" HorizontalAlignment="Left" Margin="288,10,0,0" VerticalAlignment="Top"/>
-                            <ComboBox x:Name="fromTimeComboBox" HorizontalAlignment="Left" Margin="330,10,0,0" VerticalAlignment="Top" Width="120"/>
+                            <ComboBox x:Name="fromTimeComboBox" HorizontalAlignment="Left" Margin="330,10,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="fromTimeComboBox_SelectionChanged"/>
                             <Label Content="To" HorizontalAlignment="Left" Margin="488,10,0,0" VerticalAlignment="Top"/>
-                            <ComboBox x:Name="toTimeComboBox" HorizontalAlignment="Left" Margin="515,10,0,0" VerticalAlignment="Top" Width="120"/>
+                            <ComboBox x:Name="toTimeComboBox" HorizontalAlignment="Left" Margin="515,10,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="toTimeComboBox_SelectionChanged"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Selected Business" HorizontalAlignment="Left" Height="122" Margin="193,640,0,0" VerticalAlignment="Top" Width="953">

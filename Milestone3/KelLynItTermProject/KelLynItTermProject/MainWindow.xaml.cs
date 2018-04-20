@@ -133,7 +133,7 @@ namespace KelLynItTermProject
         /// <returns>string to connect to database.</returns>
         private string buildConnString()
         {
-            return "Host=localhost; Username=postgres; Password=Abigail1; Database=projectTest;";
+            return "Host=localhost; Username=postgres; Password=Abigail1; Database=project;";
         }
 
         public MainWindow()
@@ -144,6 +144,7 @@ namespace KelLynItTermProject
             AddColumns2ReviewsGrid();
             addColumns2BusinessGrid();
             AddChoicesToSortComboBox();
+            getDays();
         }
 
         /// <summary>
@@ -651,7 +652,27 @@ namespace KelLynItTermProject
             numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
         }
 
-
+        private void getDays()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                categoryListBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT dayofweek FROM hours";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            dayComboBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
 
         User_Distance user = new User_Distance();
         private void setLocationButton_Click(object sender, RoutedEventArgs e)
@@ -663,6 +684,21 @@ namespace KelLynItTermProject
         private void resultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedBusiness.Text = ((Business)resultsGrid.SelectedItem).name;
+        }
+
+        private void dayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void fromTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void toTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
