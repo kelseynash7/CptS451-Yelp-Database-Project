@@ -38,7 +38,7 @@
                     <GroupBox Header="Friends" HorizontalAlignment="Left" Height="585" Margin="10,177,0,0" VerticalAlignment="Top" Width="342">
                         <Grid HorizontalAlignment="Left" Height="575" VerticalAlignment="Top" Width="332" Margin="0,0,-2,-12">
                             <DataGrid x:Name="FriendsDataGrid" HorizontalAlignment="Left" Height="505" Margin="10,10,0,0" VerticalAlignment="Top" Width="312"/>
-                            <Button Content="Remove Friend" HorizontalAlignment="Left" Margin="10,520,0,0" VerticalAlignment="Top" Width="176" Height="32"/>
+                            <Button x:Name="removeFriendButton" Content="Remove Friend" HorizontalAlignment="Left" Margin="10,520,0,0" VerticalAlignment="Top" Width="176" Height="32" Click="removeFriendButton_Click"/>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="Reviews by Friends" HorizontalAlignment="Left" Height="585" Margin="357,177,0,0" VerticalAlignment="Top" Width="1127">
@@ -108,7 +108,7 @@
                     </GroupBox>
                     <GroupBox HorizontalAlignment="Left" Height="219" Margin="1151,543,0,0" VerticalAlignment="Top" Width="333">
                         <StackPanel HorizontalAlignment="Left" Height="194" VerticalAlignment="Top" Width="323" Margin="0,25,-2,-6">
-                            <Button Content="Show CheckIns" Height="50"/>
+                            <Button x:Name="checkinsButton" Content="Show CheckIns" Height="50" Click="checkinsButton_Click"/>
                             <Button Content="Show Reviews" Height="50"/>
                             <Button Content="#of Businesses per Zipcode" Height="50"/>
                         </StackPanel>

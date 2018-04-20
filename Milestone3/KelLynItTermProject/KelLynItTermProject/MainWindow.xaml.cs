@@ -656,7 +656,7 @@ namespace KelLynItTermProject
         {
             using (var comm = new NpgsqlConnection(buildConnString()))
             {
-                categoryListBox.Items.Clear();
+                dayComboBox.Items.Clear();
                 comm.Open();
                 using (var cmd = new NpgsqlCommand())
                 {
@@ -688,7 +688,25 @@ namespace KelLynItTermProject
 
         private void dayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                toTimeComboBox.Items.Clear();
+                fromTimeComboBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT open FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "';";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            dayComboBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
         }
 
         private void fromTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -699,6 +717,20 @@ namespace KelLynItTermProject
         private void toTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void removeFriendButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void checkinsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (resultsGrid.SelectedIndex > -1)
+            {
+                checkInsPopUp checkInsPopUp = new checkInsPopUp(((Business)resultsGrid.SelectedItem).business_id);
+                checkInsPopUp.ShowDialog();
+            }
         }
     }
 }

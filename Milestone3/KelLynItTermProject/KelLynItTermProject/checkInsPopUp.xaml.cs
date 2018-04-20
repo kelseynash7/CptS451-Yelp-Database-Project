@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,43 @@ namespace KelLynItTermProject
     /// </summary>
     public partial class checkInsPopUp : Window
     {
-        public checkInsPopUp()
+        /// <summary>
+        /// Builder for string to connect to the database.
+        /// </summary>
+        /// <returns>string to connect to database.</returns>
+        private string buildConnString()
+        {
+            return "Host=localhost; Username=postgres; Password=Abigail1; Database=project;";
+        }
+
+        public checkInsPopUp(string selectedBusiness)
         {
             InitializeComponent();
+            checkInColumnChart(selectedBusiness);
+        }
+
+        private void checkInColumnChart(string selectedBusiness)
+        {
+            List<KeyValuePair<string, int>> chartData = new List<KeyValuePair<string, int>>();
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT day, sum(morning + afternoon + evening + night) FROM checkins WHERE business_id = '" + selectedBusiness + "' GROUP BY day ORDER BY day; ";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            chartData.Add(new KeyValuePair<string, int>(reader.GetString(0), reader.GetInt32(1)));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+            checkinChart.DataContext = chartData;
         }
     }
 }
