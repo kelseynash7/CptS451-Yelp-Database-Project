@@ -1,1 +1,5 @@
 
+*.dll
+*.JSON
+*.SQL
+*.cache
