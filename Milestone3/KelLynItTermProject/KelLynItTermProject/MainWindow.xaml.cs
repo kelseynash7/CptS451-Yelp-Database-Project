@@ -107,6 +107,8 @@ namespace KelLynItTermProject
             }
 
             public double FriendStars { get; set; }
+
+            public string Friend_ID { get; set; }
         }
 
         public class Reviews
@@ -522,13 +524,13 @@ namespace KelLynItTermProject
                                 UsefulVotesTextBox.Text = reader.GetInt32(6).ToString();
                             }
                         }
-                        cmd.CommandText = "SELECT distinct name, average_stars, yelping_since FROM users, (SELECT DISTINCT friend_id FROM friends " +
+                        cmd.CommandText = "SELECT distinct name, average_stars, yelping_since, friend_id FROM users, (SELECT DISTINCT friend_id FROM friends " +
                             "WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id; ";
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                FriendsDataGrid.Items.Add(new Friend { friendName = reader.GetString(0), FriendStars = reader.GetDouble(1), Yelping_since = (reader.GetDate(2)).ToString() });
+                                FriendsDataGrid.Items.Add(new Friend { friendName = reader.GetString(0), FriendStars = reader.GetDouble(1), Yelping_since = (reader.GetDate(2)).ToString(), Friend_ID = reader.GetString(3) });
                             }
                         }
                         cmd.CommandText = "SELECT users.name, business.name, business.city, review.text FROM users, business, review, (SELECT distinct user_id " +
@@ -808,7 +810,45 @@ namespace KelLynItTermProject
 
         private void removeFriendButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO remove friend button click
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "DELETE FROM friends WHERE friend_id = '" + ((Friend)FriendsDataGrid.SelectedItem).Friend_ID + "' AND user_id = '" + userIDListBox.SelectedItem.ToString() + "'";
+                    cmd.ExecuteNonQuery();
+                    FriendsDataGrid.Items.Clear();
+                    cmd.CommandText = "SELECT distinct name, average_stars, yelping_since, friend_id FROM users, (SELECT DISTINCT friend_id FROM friends " +
+                            "WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id; ";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            FriendsDataGrid.Items.Add(new Friend { friendName = reader.GetString(0), FriendStars = reader.GetDouble(1), Yelping_since = (reader.GetDate(2)).ToString(), Friend_ID = reader.GetString(3) });
+                        }
+                    }
+                    ReviewsByFriendsDataGrid.Items.Clear();
+                    cmd.CommandText = "SELECT users.name, business.name, business.city, review.text FROM users, business, review, (SELECT distinct user_id " +
+                            "FROM users, (SELECT DISTINCT friend_id FROM friends WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id) as b " +
+                            "WHERE b.user_id = users.user_id and business.business_id = review.business_id and review.user_id = b.user_id ORDER BY review.date desc;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ReviewsByFriendsDataGrid.Items.Add(new Reviews
+                            {
+                                ReviewUserName = reader.GetString(0),
+                                ReviewBusinessName = reader.GetString(1),
+                                ReviewCity = reader.GetString(2),
+                                ReviewText = reader.GetString(3)
+                            });
+                        }
+                    }
+                }
+                comm.Close();
+            }
         }
 
         private void checkinsButton_Click(object sender, RoutedEventArgs e)
@@ -839,7 +879,7 @@ namespace KelLynItTermProject
                     {
                         while (reader.Read())
                         {
-                            ratingComboBox.Items.Add(reader.GetString(0));
+                            ratingComboBox.Items.Add(reader.GetDouble(0));
                         }
                     }
                 }
@@ -860,6 +900,11 @@ namespace KelLynItTermProject
         private void busPerZipCodeButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO Businesses per zipcode popup
+        }
+
+        private void ratingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
