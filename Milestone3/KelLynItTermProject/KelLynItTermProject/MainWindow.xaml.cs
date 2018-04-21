@@ -410,6 +410,11 @@ namespace KelLynItTermProject
         /// <param name="e"></param>
         private void search_Click(object sender, RoutedEventArgs e)
         {
+            updateResultsGrid();
+        }
+
+        private void updateResultsGrid()
+        {
             resultsGrid.Items.Clear();
             StringBuilder sb = new StringBuilder();
 
@@ -686,7 +691,10 @@ namespace KelLynItTermProject
 
         private void resultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedBusiness.Text = ((Business)resultsGrid.SelectedItem).name;
+            if (resultsGrid.SelectedIndex > -1)
+            {
+                selectedBusiness.Text = ((Business)resultsGrid.SelectedItem).name;
+            }
         }
 
         private void dayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -860,9 +868,29 @@ namespace KelLynItTermProject
             }
         }
 
+        int reviewIDIncrementer = 0;
         private void addReviewButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO add review button click
+            if (userIDListBox.SelectedIndex > -1 && resultsGrid.SelectedIndex > -1 && ratingComboBox.SelectedIndex > -1)
+            {
+                DateTime today = DateTime.Today;
+
+                using (var comm = new NpgsqlConnection(buildConnString()))
+                {
+                    comm.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = comm;
+                        cmd.CommandText = "INSERT INTO review (review_id, user_id, business_id, date, text, stars, funny, cool, useful) " +
+                            "VALUES ('" + reviewIDIncrementer.ToString() + "', '" + userIDListBox.SelectedItem.ToString() + "', '" + ((Business)resultsGrid.SelectedItem).business_id +
+                            "', CAST('" + today.Date + "' AS date), '" + reviewText.Text + "', " + Convert.ToDouble(ratingComboBox.SelectedItem.ToString()) + ", 0, 0, 0)";
+                        cmd.ExecuteNonQuery();
+                        reviewIDIncrementer++;
+                        updateResultsGrid();
+                    }
+                    comm.Close();
+                }
+            }
         }
 
         private void addRatingChoices()
@@ -900,11 +928,6 @@ namespace KelLynItTermProject
         private void busPerZipCodeButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO Businesses per zipcode popup
-        }
-
-        private void ratingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }
