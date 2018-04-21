@@ -133,7 +133,7 @@ namespace KelLynItTermProject
         /// <returns>string to connect to database.</returns>
         private string buildConnString()
         {
-            return "Host=localhost; Username=postgres; Password=Abigail1; Database=projectTest;";
+            return "Host=localhost; Username=postgres; Password=Abigail1; Database=project;";
         }
 
         public MainWindow()
@@ -144,6 +144,8 @@ namespace KelLynItTermProject
             AddColumns2ReviewsGrid();
             addColumns2BusinessGrid();
             AddChoicesToSortComboBox();
+            getDays();
+            addRatingChoices();
         }
 
         /// <summary>
@@ -651,7 +653,27 @@ namespace KelLynItTermProject
             numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
         }
 
-
+        private void getDays()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                dayComboBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT dayofweek FROM hours";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            dayComboBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
 
         User_Distance user = new User_Distance();
         private void setLocationButton_Click(object sender, RoutedEventArgs e)
@@ -663,6 +685,181 @@ namespace KelLynItTermProject
         private void resultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             selectedBusiness.Text = ((Business)resultsGrid.SelectedItem).name;
+        }
+
+        private void dayComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                toTimeComboBox.Items.Clear();
+                fromTimeComboBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT open FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' ORDER BY open ASC;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            fromTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                        }
+                    }
+                    if (fromTimeComboBox.SelectedIndex > -1)
+                    {
+                        cmd.CommandText = "SELECT DISTINCT close FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' AND open = '" + fromTimeComboBox.SelectedItem.ToString() + "' ORDER BY close ASC;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                toTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        cmd.CommandText = "SELECT DISTINCT close FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' ORDER BY close ASC;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                toTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                            }
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        private void fromTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                toTimeComboBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    if (fromTimeComboBox.SelectedIndex > -1)
+                    {
+                        cmd.CommandText = "SELECT DISTINCT close FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' AND open = '" + fromTimeComboBox.SelectedItem.ToString() + "' ORDER BY close ASC;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                toTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        cmd.CommandText = "SELECT DISTINCT close FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' ORDER BY close ASC;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                toTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                            }
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        private void toTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                fromTimeComboBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    if (toTimeComboBox.SelectedIndex > -1)
+                    {
+                        cmd.CommandText = "SELECT DISTINCT open FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' AND close = '" + toTimeComboBox.SelectedItem.ToString() + "' ORDER BY open ASC;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                fromTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        cmd.CommandText = "SELECT DISTINCT open FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' ORDER BY open ASC;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                fromTimeComboBox.Items.Add(reader.GetTimeSpan(0));
+                            }
+                        }
+                    }
+
+                    //TODO add refining business results query here
+                }
+                comm.Close();
+            }
+        }
+
+        private void removeFriendButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO remove friend button click
+        }
+
+        private void checkinsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (resultsGrid.SelectedIndex > -1)
+            {
+                checkInsPopUp checkInsPopUp = new checkInsPopUp(((Business)resultsGrid.SelectedItem).business_id);
+                checkInsPopUp.ShowDialog();
+            }
+        }
+
+        private void addReviewButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO add review button click
+        }
+
+        private void addRatingChoices()
+        {
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                ratingComboBox.Items.Clear();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+                    cmd.CommandText = "SELECT DISTINCT stars FROM review ORDER BY stars ASC";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            ratingComboBox.Items.Add(reader.GetString(0));
+                        }
+                    }
+                }
+                comm.Close();
+            }
+        }
+
+        private void checkinButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO checkin button click
+        }
+
+        private void showReviewsButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO show reviews popup
+        }
+
+        private void busPerZipCodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO Businesses per zipcode popup
         }
     }
 }
