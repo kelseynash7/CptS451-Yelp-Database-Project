@@ -99,7 +99,7 @@
                             <TextBox x:Name="reviewText" HorizontalAlignment="Left" Height="57" Margin="10,38,0,0" TextWrapping="Wrap" Text="&lt;&lt;review text&gt;&gt;" VerticalAlignment="Top" Width="696"/>
                             <Button x:Name="checkinButton" Content="Checkin" HorizontalAlignment="Left" Margin="796,10,0,0" VerticalAlignment="Top" Width="120" Click="checkinButton_Click"/>
                             <Label Content="Rating:" HorizontalAlignment="Left" Margin="752,38,0,0" VerticalAlignment="Top"/>
-                            <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Margin="796,0,0,52" VerticalAlignment="Bottom" Width="120" SelectionChanged="ratingComboBox_SelectionChanged"/>
+                            <ComboBox x:Name="ratingComboBox" HorizontalAlignment="Left" Margin="796,0,0,52" VerticalAlignment="Bottom" Width="120"/>
                             <Button x:Name="addReviewButton" Content="Add Review" HorizontalAlignment="Left" Margin="796,69,0,0" VerticalAlignment="Top" Width="120" Height="26" Click="addReviewButton_Click"/>
                         </Grid>
                     </GroupBox>

@@ -3,3 +3,5 @@
 *.JSON
 *.SQL
 *.cache
+*.pdb
+*.ide
