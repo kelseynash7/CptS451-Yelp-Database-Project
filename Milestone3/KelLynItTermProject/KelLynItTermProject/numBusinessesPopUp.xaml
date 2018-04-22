@@ -1,12 +1,22 @@
-﻿<Window x:Class="KelLynItTermProject.numBusinessesPopUp"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KelLynItTermProject"
+        xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit" x:Class="KelLynItTermProject.numBusinessesPopUp"
         mc:Ignorable="d"
         Title="numBusinessesPopUp" Height="450" Width="800">
     <Grid>
-        
+        <ScrollViewer HorizontalAlignment="Left" Height="400" Margin="10,10,0,0" VerticalAlignment="Top" Width="774">
+            <chartingToolkit:Chart Title="Businesses per Zipcode" Name="businessPerZipcode">
+                <chartingToolkit:Chart.DataContext>
+                    <PointCollection>1,10 2,20 3,30 4,40</PointCollection>
+                </chartingToolkit:Chart.DataContext>
+                <chartingToolkit:ColumnSeries DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" Title="# of Businesses"></chartingToolkit:ColumnSeries>
+            </chartingToolkit:Chart>
+
+        </ScrollViewer>
+
     </Grid>
 </Window>

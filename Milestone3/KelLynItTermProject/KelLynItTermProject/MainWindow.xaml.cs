@@ -135,7 +135,7 @@ namespace KelLynItTermProject
         /// <returns>string to connect to database.</returns>
         private string buildConnString()
         {
-            return "Host=localhost; Username=postgres; Password=Abigail1; Database=project;";
+            return "Host=localhost; Username=postgres; Password=Anjaroonie7; Database=project;";
         }
 
         public MainWindow()
