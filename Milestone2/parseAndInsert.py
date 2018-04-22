@@ -20,7 +20,7 @@ def insert2BusinessTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -76,7 +76,7 @@ def insert2HoursTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -116,7 +116,7 @@ def insert2CategoryTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -157,7 +157,7 @@ def insert2UsersTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -211,7 +211,7 @@ def parseCheckins(checkIns):
                 AM += int(checkIns.get(day).get(time))
             elif (realtime >= twelve and realtime < five):
                 AN += int(checkIns.get(day).get(time))
-            elif (realtime >= five and realtime > eleven):
+            elif (realtime >= five and realtime < eleven):
                 EV += int(checkIns.get(day).get(time))
             elif (realtime >= eleven or  realtime < six):
                 NI += int(checkIns.get(day).get(time))
@@ -229,7 +229,7 @@ def insert2CheckinsTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -274,7 +274,7 @@ def insert2ReviewTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -315,7 +315,7 @@ def insert2FriendTable():
 
         #connect to yelpdb database on postgres server using psycopg2
         try:
-            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Anjaroonie7'")
+            conn = psycopg2.connect("dbname='project' user='postgres' host='localhost' password='Abigail1'")
         except:
             print('Unable to connect to the database!')
         cur = conn.cursor()
@@ -347,10 +347,10 @@ def insert2FriendTable():
     outfile.close() 
     f.close()
 
-#insert2BusinessTable()
-#insert2HoursTable()
-#insert2CategoryTable()
-#insert2UsersTable()
-#insert2CheckinsTable()
+insert2BusinessTable()
+insert2HoursTable()
+insert2CategoryTable()
+insert2UsersTable()
+insert2CheckinsTable()
 insert2ReviewTable()
-#insert2FriendTable()
+insert2FriendTable()
