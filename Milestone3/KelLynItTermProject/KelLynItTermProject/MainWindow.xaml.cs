@@ -928,6 +928,8 @@ namespace KelLynItTermProject
         private void busPerZipCodeButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO Businesses per zipcode popup
+            numBusinessesPopUp popup = new numBusinessesPopUp(cityListBox.SelectedItem.ToString());
+            popup.Show();
         }
     }
 }

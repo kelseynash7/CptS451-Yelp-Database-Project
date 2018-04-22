@@ -37,7 +37,7 @@ namespace KelLynItTermProject
                     cmd.Connection = conn;
 
                     // retrieve rows
-                    cmd.CommandText = "select zipcode, count(business_id) from business where city= '" + selectedCity + "' group by zipcode order by zipcode; ";
+                    cmd.CommandText = "select postal_code, count(business_id) from business where city= '" + selectedCity + "' group by postal_code order by postal_code; ";
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
