@@ -782,7 +782,7 @@ namespace KelLynItTermProject
         {
             using (var comm = new NpgsqlConnection(buildConnString()))
             {
-                fromTimeComboBox.Items.Clear();
+                StringBuilder sb = new StringBuilder();
                 comm.Open();
                 using (var cmd = new NpgsqlCommand())
                 {
@@ -809,10 +809,64 @@ namespace KelLynItTermProject
                             }
                         }
                     }
+                    if (toTimeComboBox.SelectedIndex > -1 && fromTimeComboBox.SelectedIndex > -1)
+                    {
+                        resultsGrid.Items.Clear();
+                        if (selectedCategoriesListBox.Items.Count >= 1)
+                        {
+                            sb.Append("WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "' ");
+                            for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
+                            {
+                                sb.Append("OR category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "' ");
+                            }
+                        }
+                        else
+                        {
+                            sb.Append("Where category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
+                        }
 
-                    //TODO add refining business results query here
+                        string builtString = sb.ToString();
+
+                        //TODO add refining business results query here
+                        //This works on exact open and close....need to fix for inbetween times
+                        cmd.CommandText = "SELECT * from (SELECT * FROM business, (SELECT DISTINCT business_id as busID FROM categories " + builtString + ") a " +
+                            "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
+                            "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC) as b, hours where dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' and open = CAST " +
+                            "('" + fromTimeComboBox.SelectedItem.ToString() + "' as time) and close = CAST ('" + toTimeComboBox.SelectedItem.ToString() + "' " +
+                            "as time) and b.business_id = hours.business_id order by b.name ASC";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Business business = new Business();
+                                business.business_id = reader.GetString(0);
+                                business.name = reader.GetString(1);
+                                business.address = reader.GetString(2);
+                                business.city = reader.GetString(3);
+                                business.state = reader.GetString(4);
+                                business.zipcode = reader.GetString(5);
+                                business.latitude = reader.GetDouble(6);
+                                business.longitude = reader.GetDouble(7);
+                                business.stars = reader.GetDouble(8);
+                                business.reviewCount = reader.GetInt32(9);
+                                business.isOpen = reader.GetInt32(10);
+                                business.numCheckIns = reader.GetInt32(11);
+                                business.reviewRating = reader.GetDouble(12);
+                                resultsGrid.Items.Add(business);
+
+                                if (user.User_latitude != null && user.User_longitude != null)
+                                {
+                                    var businessCoOrds = new GeoCoordinate(business.latitude, business.longitude);
+                                    var userCoOrds = new GeoCoordinate(user.User_latitude, user.User_longitude);
+                                    var meters = userCoOrds.GetDistanceTo(businessCoOrds);
+                                    business.distance = meters / 1609.344;
+                                }
+                            }
+                        }
+                    }
                 }
                 comm.Close();
+                sb.Clear();
             }
         }
 
