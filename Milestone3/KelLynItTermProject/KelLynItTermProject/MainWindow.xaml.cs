@@ -917,7 +917,50 @@ namespace KelLynItTermProject
 
         private void checkinButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO checkin button click
+            DateTime today = DateTime.Now;
+            var day = today.DayOfWeek.ToString();
+            var time = today.TimeOfDay;
+            string timeOfDayInts = "1, 0, 0, 0";
+            string timeOfDay = "morning";
+
+            if(time.Hours >= 6 && time.Hours < 12)
+            {
+                timeOfDay = "morning";
+                timeOfDayInts = "1, 0, 0, 0";
+            }
+            else if (time.Hours >= 12 && time.Hours < 17)
+            {
+                timeOfDay = "afternoon";
+                timeOfDayInts = "0, 1, 0, 0";
+            }
+            else if (time.Hours >= 17 && time.Hours < 23)
+            {
+                timeOfDay = "evening";
+                timeOfDayInts = "0, 0, 1, 0";
+            }
+            else if (time.Hours >= 23 || time.Hours < 6)
+            {
+                timeOfDay = "night";
+                timeOfDayInts = "0, 0, 0, 1";
+            }
+
+            if (resultsGrid.SelectedIndex > -1)
+            {
+                //TODO checkin button click
+                using (var comm = new NpgsqlConnection(buildConnString()))
+                {
+                    comm.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = comm;
+                        cmd.CommandText =
+                        "INSERT into checkins(day, business_id, morning, afternoon, evening, night) VALUES('" + day.ToString() + "', '" + ((Business)resultsGrid.SelectedItem).business_id
+                            + "', " + timeOfDayInts + ") ON CONFLICT ON CONSTRAINT checkins_pkey DO UPDATE SET " + timeOfDay + " = checkins." + timeOfDay + " + 1";
+                        updateResultsGrid();
+                    }
+                    comm.Close();
+                }
+            }
         }
 
         private void showReviewsButton_Click(object sender, RoutedEventArgs e)
