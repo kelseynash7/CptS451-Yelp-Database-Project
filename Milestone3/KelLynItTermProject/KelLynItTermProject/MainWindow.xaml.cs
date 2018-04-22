@@ -946,7 +946,6 @@ namespace KelLynItTermProject
 
             if (resultsGrid.SelectedIndex > -1)
             {
-                //TODO checkin button click
                 using (var comm = new NpgsqlConnection(buildConnString()))
                 {
                     comm.Open();
@@ -956,6 +955,9 @@ namespace KelLynItTermProject
                         cmd.CommandText =
                         "INSERT into checkins(day, business_id, morning, afternoon, evening, night) VALUES('" + day.ToString() + "', '" + ((Business)resultsGrid.SelectedItem).business_id
                             + "', " + timeOfDayInts + ") ON CONFLICT ON CONSTRAINT checkins_pkey DO UPDATE SET " + timeOfDay + " = checkins." + timeOfDay + " + 1";
+                        cmd.ExecuteNonQuery();
+                        cmd.CommandText = "update business set numCheckins = a.sum from ( select business_id, sum(morning + afternoon + evening + night) from checkins group by business_id) a where business.business_id = a.business_id";
+                        cmd.ExecuteNonQuery();
                         updateResultsGrid();
                     }
                     comm.Close();
