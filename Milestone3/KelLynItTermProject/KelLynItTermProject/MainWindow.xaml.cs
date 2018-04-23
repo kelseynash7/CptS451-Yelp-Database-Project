@@ -562,12 +562,18 @@ namespace KelLynItTermProject
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
-            selectedCategoriesListBox.Items.Add(categoryListBox.SelectedItem.ToString());
+            if (categoryListBox.SelectedIndex > -1)
+            {
+                selectedCategoriesListBox.Items.Add(categoryListBox.SelectedItem.ToString());
+            }
         }
 
         private void removeButton_Click(object sender, RoutedEventArgs e)
         {
-            selectedCategoriesListBox.Items.Remove(categoryListBox.SelectedItem.ToString());
+            if (categoryListBox.SelectedIndex > -1)
+            {
+                selectedCategoriesListBox.Items.Remove(categoryListBox.SelectedItem.ToString());
+            }
         }
 
         private void sortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
