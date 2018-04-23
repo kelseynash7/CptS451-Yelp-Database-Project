@@ -42,7 +42,7 @@ namespace KelLynItTermProject
                         while (reader.Read())
                         {
                             //reviewData.Add(new List<string> { reader.GetDateTime(0).ToString(), reader.GetString(1), reader.GetDouble(2).ToString(), reader.GetString(3), reader.GetInt32(4).ToString(), reader.GetInt32(5).ToString(), reader.GetInt32(6).ToString()});
-                            reviewData.Add(new Review() { Date = reader.GetDateTime(0).ToString(), UserName = reader.GetString(1), Stars = reader.GetDouble(2).ToString(), Text = reader.GetString(3), Funny = reader.GetInt32(4).ToString(), Useful = reader.GetInt32(5).ToString(), Cool = reader.GetInt32(6).ToString() });
+                            reviewData.Add(new Review() { Date = reader.GetDate(0).ToString(), UserName = reader.GetString(1), Stars = reader.GetDouble(2).ToString(), Text = reader.GetString(3), Funny = reader.GetInt32(4).ToString(), Useful = reader.GetInt32(5).ToString(), Cool = reader.GetInt32(6).ToString() });
                         }
                     }
                 }
