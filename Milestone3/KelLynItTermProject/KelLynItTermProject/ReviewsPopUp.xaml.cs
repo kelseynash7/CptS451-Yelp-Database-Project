@@ -30,7 +30,7 @@ namespace KelLynItTermProject
         {
             //List<List<string>> reviewData = new List<List<string>>();
             List<Review> reviewData = new List<Review>();
-            using (var comm = new NpgsqlConnection("Host=localhost; Username=postgres; Password=Anjaroonie7; Database=project"))
+            using (var comm = new NpgsqlConnection("Host=localhost; Username=postgres; Password=Abigail1; Database=project"))
             {
                 comm.Open();
                 using (var cmd = new NpgsqlCommand())

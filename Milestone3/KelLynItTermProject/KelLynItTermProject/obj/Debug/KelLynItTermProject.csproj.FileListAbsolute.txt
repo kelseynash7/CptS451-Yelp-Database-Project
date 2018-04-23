@@ -198,3 +198,4 @@ E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\obj\Debug\K
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.GenerateResource.cache
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.CoreCompileInputs.cache
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\obj\Debug\KelLynItTermProject.csproj.CopyComplete
+C:\Users\lclar\Documents\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\System.Windows.Controls.DataVisualization.Toolkit.xml

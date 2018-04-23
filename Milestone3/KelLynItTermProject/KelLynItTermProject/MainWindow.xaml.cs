@@ -135,7 +135,7 @@ namespace KelLynItTermProject
         /// <returns>string to connect to database.</returns>
         private string buildConnString()
         {
-            return "Host=localhost; Username=postgres; Password=Anjaroonie7; Database=project;";
+            return "Host=localhost; Username=postgres; Password=Abigail1; Database=project;";
         }
 
         public MainWindow()
@@ -426,20 +426,20 @@ namespace KelLynItTermProject
                     cmd.Connection = comm;
                     if (selectedCategoriesListBox.Items.Count >= 1)
                     {
-                        sb.Append("WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "' ");
+                        sb.Append("WHERE business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "') ");
                         for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
                         {
-                            sb.Append("OR category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "' ");
+                            sb.Append("AND business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "') ");
                         }
                     }
                     else
                     {
-                        sb.Append("Where category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
+                        sb.Append("WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
                     }
 
                     string builtString = sb.ToString();
 
-                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID FROM categories " + builtString + ") a " +
+                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID FROM business " + builtString + ") a " +
                         "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
                         "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC; ";
                     using (var reader = cmd.ExecuteReader())

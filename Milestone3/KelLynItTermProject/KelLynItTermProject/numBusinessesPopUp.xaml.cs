@@ -29,7 +29,7 @@ namespace KelLynItTermProject
         private void numBusinessesChart(string selectedCity)
         {
             List<KeyValuePair<string, int>> businessChartData = new List<KeyValuePair<string, int>>();
-            using (var conn = new NpgsqlConnection("Host=localhost; Username=postgres; Password=Anjaroonie7; Database=project"))
+            using (var conn = new NpgsqlConnection("Host=localhost; Username=postgres; Password=Abigail1; Database=project"))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand())
