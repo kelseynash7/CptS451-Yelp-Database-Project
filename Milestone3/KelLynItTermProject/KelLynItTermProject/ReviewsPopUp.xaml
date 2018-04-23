@@ -7,6 +7,20 @@
         mc:Ignorable="d"
         Title="ReviewsPopUp" Height="450" Width="800">
     <Grid>
-        
+        <ListView DataContext="{Binding}" HorizontalAlignment="Left" Height="410" VerticalAlignment="Top" Width="794" Name="ReviewsView" Margin="0,0,-0.4,0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Date" Width="60" DisplayMemberBinding="{Binding Date}"/>
+                    <GridViewColumn Header="User Name" Width="80" DisplayMemberBinding="{Binding UserName}"/>
+                    <GridViewColumn Header="Stars" Width="50" DisplayMemberBinding="{Binding Stars}"/>
+                    <GridViewColumn Header="Text" Width="450" DisplayMemberBinding="{Binding Text}"/>
+                    <GridViewColumn Header="Funny" Width="50" DisplayMemberBinding="{Binding Funny}"/>
+                    <GridViewColumn Header="Useful" Width="50" DisplayMemberBinding="{Binding Useful}"/>
+                    <GridViewColumn Header="Cool" Width="50" DisplayMemberBinding="{Binding Cool}"/>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>
