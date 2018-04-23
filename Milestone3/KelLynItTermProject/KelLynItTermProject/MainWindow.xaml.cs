@@ -415,67 +415,70 @@ namespace KelLynItTermProject
 
         private void updateResultsGrid()
         {
-            resultsGrid.Items.Clear();
-            StringBuilder sb = new StringBuilder();
-
-            using (var comm = new NpgsqlConnection(buildConnString()))
+            if (categoryListBox.SelectedIndex > -1 && cityListBox.SelectedIndex > -1 && stateList.SelectedIndex > -1 && zipCodeListBox.SelectedIndex > -1)
             {
-                comm.Open();
-                using (var cmd = new NpgsqlCommand())
+                resultsGrid.Items.Clear();
+                StringBuilder sb = new StringBuilder();
+
+                using (var comm = new NpgsqlConnection(buildConnString()))
                 {
-                    cmd.Connection = comm;
-                    if (selectedCategoriesListBox.Items.Count >= 1)
+                    comm.Open();
+                    using (var cmd = new NpgsqlCommand())
                     {
-                        sb.Append("FROM business WHERE business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "') ");
-                        for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
+                        cmd.Connection = comm;
+                        if (selectedCategoriesListBox.Items.Count >= 1)
                         {
-                            sb.Append("AND business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "') ");
-                        }
-                    }
-                    else
-                    {
-                        sb.Append("FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
-                    }
-
-                    string builtString = sb.ToString();
-
-                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID " + builtString + ") a " +
-                        "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
-                        "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC; ";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Business business = new Business();
-                            business.business_id = reader.GetString(0);
-                            business.name = reader.GetString(1);
-                            business.address = reader.GetString(2);
-                            business.city = reader.GetString(3);
-                            business.state = reader.GetString(4);
-                            business.zipcode = reader.GetString(5);
-                            business.latitude = reader.GetDouble(6);
-                            business.longitude = reader.GetDouble(7);
-                            business.stars = reader.GetDouble(8);
-                            business.reviewCount = reader.GetInt32(9);
-                            business.isOpen = reader.GetInt32(10);
-                            business.numCheckIns = reader.GetInt32(11);
-                            business.reviewRating = reader.GetDouble(12);
-                            resultsGrid.Items.Add(business);
-
-                            if (user.User_latitude != 0 && user.User_longitude != 0)
+                            sb.Append("FROM business WHERE business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "') ");
+                            for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
                             {
-                                var businessCoOrds = new GeoCoordinate(business.latitude, business.longitude);
-                                var userCoOrds = new GeoCoordinate(user.User_latitude, user.User_longitude);
-                                var meters = userCoOrds.GetDistanceTo(businessCoOrds);
-                                business.distance = meters / 1609.344;
+                                sb.Append("AND business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "') ");
+                            }
+                        }
+                        else
+                        {
+                            sb.Append("FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
+                        }
+
+                        string builtString = sb.ToString();
+
+                        cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID " + builtString + ") a " +
+                            "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
+                            "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC; ";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Business business = new Business();
+                                business.business_id = reader.GetString(0);
+                                business.name = reader.GetString(1);
+                                business.address = reader.GetString(2);
+                                business.city = reader.GetString(3);
+                                business.state = reader.GetString(4);
+                                business.zipcode = reader.GetString(5);
+                                business.latitude = reader.GetDouble(6);
+                                business.longitude = reader.GetDouble(7);
+                                business.stars = reader.GetDouble(8);
+                                business.reviewCount = reader.GetInt32(9);
+                                business.isOpen = reader.GetInt32(10);
+                                business.numCheckIns = reader.GetInt32(11);
+                                business.reviewRating = reader.GetDouble(12);
+                                resultsGrid.Items.Add(business);
+
+                                if (user.User_latitude != 0 && user.User_longitude != 0)
+                                {
+                                    var businessCoOrds = new GeoCoordinate(business.latitude, business.longitude);
+                                    var userCoOrds = new GeoCoordinate(user.User_latitude, user.User_longitude);
+                                    var meters = userCoOrds.GetDistanceTo(businessCoOrds);
+                                    business.distance = meters / 1609.344;
+                                }
                             }
                         }
                     }
+                    comm.Close();
+                    sb.Clear();
                 }
-                comm.Close();
-                sb.Clear();
+                numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
             }
-            numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
         }
 
         private void userTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -691,8 +694,11 @@ namespace KelLynItTermProject
         User_Distance user = new User_Distance();
         private void setLocationButton_Click(object sender, RoutedEventArgs e)
         {
-            user.User_latitude = Convert.ToDouble(UserLatitudeTextBox.Text);
-            user.User_longitude = Convert.ToDouble(UserLongitudeTextBox.Text);
+            if ((UserLatitudeTextBox.Text != null && UserLatitudeTextBox.Text != "") && (UserLongitudeTextBox.Text != null && UserLongitudeTextBox.Text != ""))
+            {
+                user.User_latitude = Convert.ToDouble(UserLatitudeTextBox.Text);
+                user.User_longitude = Convert.ToDouble(UserLongitudeTextBox.Text);
+            }
         }
 
         private void resultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -847,53 +853,47 @@ namespace KelLynItTermProject
 
         private void removeFriendButton_Click(object sender, RoutedEventArgs e)
         {
-            using (var comm = new NpgsqlConnection(buildConnString()))
+            if (FriendsDataGrid.SelectedIndex > -1)
             {
-                
-                comm.Open();
-                using (var cmd = new NpgsqlCommand())
+                using (var comm = new NpgsqlConnection(buildConnString()))
                 {
-                    cmd.Connection = comm;
-                    cmd.CommandText = "DELETE FROM friends WHERE friend_id = '" + ((Friend)FriendsDataGrid.SelectedItem).Friend_ID + "' AND user_id = '" + userIDListBox.SelectedItem.ToString() + "'";
-                    cmd.ExecuteNonQuery();
-                    FriendsDataGrid.Items.Clear();
-                    cmd.CommandText = "SELECT distinct name, average_stars, yelping_since, friend_id FROM users, (SELECT DISTINCT friend_id FROM friends " +
-                            "WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id; ";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            FriendsDataGrid.Items.Add(new Friend { friendName = reader.GetString(0), FriendStars = reader.GetDouble(1), Yelping_since = (reader.GetDate(2)).ToString(), Friend_ID = reader.GetString(3) });
-                        }
-                    }
-                    ReviewsByFriendsDataGrid.Items.Clear();
-                    cmd.CommandText = "SELECT users.name, business.name, business.city, review.text FROM users, business, review, (SELECT distinct user_id " +
-                            "FROM users, (SELECT DISTINCT friend_id FROM friends WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id) as b " +
-                            "WHERE b.user_id = users.user_id and business.business_id = review.business_id and review.user_id = b.user_id ORDER BY review.date desc;";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            ReviewsByFriendsDataGrid.Items.Add(new Reviews
-                            {
-                                ReviewUserName = reader.GetString(0),
-                                ReviewBusinessName = reader.GetString(1),
-                                ReviewCity = reader.GetString(2),
-                                ReviewText = reader.GetString(3)
-                            });
-                        }
-                    }
-                }
-                comm.Close();
-            }
-        }
 
-        private void checkinsButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (resultsGrid.SelectedIndex > -1)
-            {
-                checkInsPopUp checkInsPopUp = new checkInsPopUp(((Business)resultsGrid.SelectedItem).business_id);
-                checkInsPopUp.ShowDialog();
+                    comm.Open();
+                    using (var cmd = new NpgsqlCommand())
+                    {
+                        cmd.Connection = comm;
+                        cmd.CommandText = "DELETE FROM friends WHERE friend_id = '" + ((Friend)FriendsDataGrid.SelectedItem).Friend_ID + "' AND user_id = '" + userIDListBox.SelectedItem.ToString() + "'";
+                        cmd.ExecuteNonQuery();
+                        FriendsDataGrid.Items.Clear();
+                        cmd.CommandText = "SELECT distinct name, average_stars, yelping_since, friend_id FROM users, (SELECT DISTINCT friend_id FROM friends " +
+                                "WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id; ";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                FriendsDataGrid.Items.Add(new Friend { friendName = reader.GetString(0), FriendStars = reader.GetDouble(1), Yelping_since = (reader.GetDate(2)).ToString(), Friend_ID = reader.GetString(3) });
+                            }
+                        }
+                        ReviewsByFriendsDataGrid.Items.Clear();
+                        cmd.CommandText = "SELECT users.name, business.name, business.city, review.text FROM users, business, review, (SELECT distinct user_id " +
+                                "FROM users, (SELECT DISTINCT friend_id FROM friends WHERE user_id = '" + userIDListBox.SelectedItem.ToString() + "') as a WHERE a.friend_id = users.user_id) as b " +
+                                "WHERE b.user_id = users.user_id and business.business_id = review.business_id and review.user_id = b.user_id ORDER BY review.date desc;";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                ReviewsByFriendsDataGrid.Items.Add(new Reviews
+                                {
+                                    ReviewUserName = reader.GetString(0),
+                                    ReviewBusinessName = reader.GetString(1),
+                                    ReviewCity = reader.GetString(2),
+                                    ReviewText = reader.GetString(3)
+                                });
+                            }
+                        }
+                    }
+                    comm.Close();
+                }
             }
         }
 
@@ -992,16 +992,32 @@ namespace KelLynItTermProject
             }
         }
 
+
+        private void checkinsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (resultsGrid.SelectedIndex > -1)
+            {
+                checkInsPopUp checkInsPopUp = new checkInsPopUp(((Business)resultsGrid.SelectedItem).business_id);
+                checkInsPopUp.ShowDialog();
+            }
+        }
+
         private void showReviewsButton_Click(object sender, RoutedEventArgs e)
         {
-            ReviewsPopUp popup = new ReviewsPopUp(((Business)resultsGrid.SelectedItem).business_id);
-            popup.Show();
+            if (resultsGrid.SelectedIndex > -1)
+            {
+                ReviewsPopUp popup = new ReviewsPopUp(((Business)resultsGrid.SelectedItem).business_id);
+                popup.Show();
+            }
         }
 
         private void busPerZipCodeButton_Click(object sender, RoutedEventArgs e)
         {
-            numBusinessesPopUp popup = new numBusinessesPopUp(cityListBox.SelectedItem.ToString());
-            popup.Show();
+            if (resultsGrid.Items.Count > 0)
+            {
+                numBusinessesPopUp popup = new numBusinessesPopUp(cityListBox.SelectedItem.ToString());
+                popup.Show();
+            }
         }
     }
 }
