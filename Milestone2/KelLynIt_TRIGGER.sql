@@ -52,7 +52,7 @@ RETURNS TRIGGER AS
 $$
 BEGIN
 	UPDATE Business
-    SET numcheckins = numcheckins + NEW.morning - OLD.morning + NEW.afternoon - OLD.afternoon + NEW.evening - OLD.afternoon + NEW.night - OLD.night
+    SET numcheckins = numcheckins + 1
     WHERE Business.business_id = NEW.business_id;
 	RETURN NEW;
 END;

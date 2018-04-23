@@ -186,6 +186,10 @@ E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\K
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\Npgsql.dll
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\System.Windows.Controls.DataVisualization.Toolkit.dll
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\Npgsql.xml
+<<<<<<< HEAD
+=======
+E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\System.Threading.Tasks.Extensions.xml
+>>>>>>> master
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\bin\Debug\System.Windows.Controls.DataVisualization.Toolkit.xml
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\obj\Debug\checkInsPopUp.g.cs
 E:\GitHub\CptS451\Milestone3\KelLynItTermProject\KelLynItTermProject\obj\Debug\checkInsPopUp.baml
