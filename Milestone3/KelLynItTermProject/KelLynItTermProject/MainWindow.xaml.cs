@@ -135,7 +135,7 @@ namespace KelLynItTermProject
         /// <returns>string to connect to database.</returns>
         private string buildConnString()
         {
-            return "Host=localhost; Username=postgres; Password=Abigail1; Database=project;";
+            return "Host=localhost; Username=postgres; Password=Anjaroonie7; Database=project;";
         }
 
         public MainWindow()
@@ -1009,8 +1009,6 @@ namespace KelLynItTermProject
                         cmd.CommandText =
                         "INSERT into checkins(day, business_id, morning, afternoon, evening, night) VALUES('" + day.ToString() + "', '" + ((Business)resultsGrid.SelectedItem).business_id
                             + "', " + timeOfDayInts + ") ON CONFLICT ON CONSTRAINT checkins_pkey DO UPDATE SET " + timeOfDay + " = checkins." + timeOfDay + " + 1";
-                        cmd.ExecuteNonQuery();
-                        cmd.CommandText = "update business set numCheckins = a.sum from ( select business_id, sum(morning + afternoon + evening + night) from checkins group by business_id) a where business.business_id = a.business_id";
                         cmd.ExecuteNonQuery();
                         updateResultsGrid();
                     }
