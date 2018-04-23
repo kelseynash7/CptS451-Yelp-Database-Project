@@ -1,4 +1,4 @@
-﻿<Window x:Class="KelLynItTermProject.numBusinessesPopUp"
+﻿<Window xmlns:toolkit="http://schemas.microsoft.com/winfx/2006/xaml/presentation/toolkit"  x:Class="KelLynItTermProject.numBusinessesPopUp"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,6 +7,14 @@
         mc:Ignorable="d"
         Title="numBusinessesPopUp" Height="450" Width="800">
     <Grid>
-        
+        <ScrollViewer HorizontalAlignment="Left" Height="400" Margin="10,10,0,0" VerticalAlignment="Top" Width="774">
+            <toolkit:Chart Title="Businesses per Zipcode" Name="businessPerZipcode">
+                <toolkit:Chart.DataContext>
+                    <PointCollection>1,10 2,20 3,30 4,40</PointCollection>
+                </toolkit:Chart.DataContext>
+                <toolkit:ColumnSeries DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" Title="# of Businesses"></toolkit:ColumnSeries>
+            </toolkit:Chart>
+
+        </ScrollViewer>
     </Grid>
 </Window>
