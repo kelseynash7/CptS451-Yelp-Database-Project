@@ -410,11 +410,42 @@ namespace KelLynItTermProject
         /// <param name="e"></param>
         private void search_Click(object sender, RoutedEventArgs e)
         {
+            toTimeComboBox.SelectedIndex = -1;
+            fromTimeComboBox.SelectedIndex = -1;
+            sortComboBox.SelectedIndex = -1;
+
             updateResultsGrid();
         }
 
         private void updateResultsGrid()
         {
+            string sortby = "name";
+            if (sortComboBox.SelectedIndex > -1)
+            {
+                switch (sortComboBox.SelectedItem.ToString())
+                {
+                    case "Name (default)":
+                        sortby = "name ASC";
+                        break;
+                    case "Highest rating (stars)":
+                        sortby = "stars DESC";
+                        break;
+                    case "Most Reviewed":
+                        sortby = "reviewcount DESC";
+                        break;
+                    case "Best Review Rating (highest avg review rating)":
+                        sortby = "reviewrating DESC";
+                        break;
+                    case "Most Check-Ins":
+                        sortby = "numcheckins DESC";
+                        break;
+                    case "Nearest":
+
+                        break;
+                    default:
+                        break;
+                }
+            }
             if (categoryListBox.SelectedIndex > -1 && cityListBox.SelectedIndex > -1 && stateList.SelectedIndex > -1 && zipCodeListBox.SelectedIndex > -1)
             {
                 resultsGrid.Items.Clear();
@@ -443,7 +474,7 @@ namespace KelLynItTermProject
 
                         cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID " + builtString + ") a " +
                             "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
-                            "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC; ";
+                            "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY " + sortby + " ; ";
                         using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -479,6 +510,105 @@ namespace KelLynItTermProject
                 }
                 numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
             }
+        }
+
+        public void updateResultsGridWithHours()
+        {
+            string sortby = "name";
+            if (sortComboBox.SelectedIndex > -1)
+            {
+                switch (sortComboBox.SelectedItem.ToString())
+                {
+                    case "Name (default)":
+                        sortby = "name ASC";
+                        break;
+                    case "Highest rating (stars)":
+                        sortby = "stars DESC";
+                        break;
+                    case "Most Reviewed":
+                        sortby = "reviewcount DESC";
+                        break;
+                    case "Best Review Rating (highest avg review rating)":
+                        sortby = "reviewrating DESC";
+                        break;
+                    case "Most Check-Ins":
+                        sortby = "numcheckins DESC";
+                        break;
+                    case "Nearest":
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            using (var comm = new NpgsqlConnection(buildConnString()))
+            {
+                StringBuilder sb = new StringBuilder();
+                comm.Open();
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = comm;
+
+                    if (toTimeComboBox.SelectedIndex > -1 && fromTimeComboBox.SelectedIndex > -1)
+                    {
+                        resultsGrid.Items.Clear();
+                        if (selectedCategoriesListBox.Items.Count >= 1)
+                        {
+                            sb.Append("FROM business WHERE business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "') ");
+                            for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
+                            {
+                                sb.Append("AND business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "') ");
+                            }
+                        }
+                        else
+                        {
+                            sb.Append("FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
+                        }
+
+                        string builtString = sb.ToString();
+
+                        cmd.CommandText = "SELECT * from (SELECT * FROM business, (SELECT DISTINCT business_id as busID " + builtString + ") a " +
+                            "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
+                            "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC) as b," +
+                            " hours where dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' and ((open <= CAST " +
+                            "('" + fromTimeComboBox.SelectedItem.ToString() + "' as time) and close >= CAST ('" + toTimeComboBox.SelectedItem.ToString() + "' " +
+                            "as time)) OR (close <= open AND open <= CAST ('" + fromTimeComboBox.SelectedItem.ToString() + "' as time))) and b.business_id = hours.business_id order by b." + sortby + ";";
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                Business business = new Business();
+                                business.business_id = reader.GetString(0);
+                                business.name = reader.GetString(1);
+                                business.address = reader.GetString(2);
+                                business.city = reader.GetString(3);
+                                business.state = reader.GetString(4);
+                                business.zipcode = reader.GetString(5);
+                                business.latitude = reader.GetDouble(6);
+                                business.longitude = reader.GetDouble(7);
+                                business.stars = reader.GetDouble(8);
+                                business.reviewCount = reader.GetInt32(9);
+                                business.isOpen = reader.GetInt32(10);
+                                business.numCheckIns = reader.GetInt32(11);
+                                business.reviewRating = reader.GetDouble(12);
+                                resultsGrid.Items.Add(business);
+
+                                if (user.User_latitude != 0 && user.User_longitude != 0)
+                                {
+                                    var businessCoOrds = new GeoCoordinate(business.latitude, business.longitude);
+                                    var userCoOrds = new GeoCoordinate(user.User_latitude, user.User_longitude);
+                                    var meters = userCoOrds.GetDistanceTo(businessCoOrds);
+                                    business.distance = meters / 1609.344;
+                                }
+                            }
+                        }
+                    }
+                }
+                comm.Close();
+                sb.Clear();
+            }
+            numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
         }
 
         private void userTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -581,92 +711,15 @@ namespace KelLynItTermProject
 
         private void sortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string sortby = "name";
-
-            switch (sortComboBox.SelectedItem.ToString())
+            if (toTimeComboBox.SelectedIndex > -1 && fromTimeComboBox.SelectedIndex > -1)
             {
-                case "Name (default)":
-                    sortby = "name ASC";
-                    break;
-                case "Highest rating (stars)":
-                    sortby = "stars DESC";
-                    break;
-                case "Most Reviewed":
-                    sortby = "reviewcount DESC";
-                    break;
-                case "Best Review Rating (highest avg review rating)":
-                    sortby = "reviewrating DESC";
-                    break;
-                case "Most Check-Ins":
-                    sortby = "numcheckins DESC";
-                    break;
-                case "Nearest":
-
-                    break;
-                default:
-                    break;
+                updateResultsGridWithHours();
             }
-            resultsGrid.Items.Clear();
-            StringBuilder sb = new StringBuilder();
-
-            using (var comm = new NpgsqlConnection(buildConnString()))
+            else
             {
-                comm.Open();
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = comm;
-                    if (selectedCategoriesListBox.Items.Count >= 1)
-                    {
-                        sb.Append("FROM business WHERE business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "') ");
-                        for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
-                        {
-                            sb.Append("AND business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "') ");
-                        }
-                    }
-                    else
-                    {
-                        sb.Append("FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
-                    }
-
-                    string builtString = sb.ToString();
-
-                    cmd.CommandText = "SELECT * FROM business, (SELECT DISTINCT business_id as busID " + builtString + ") a " +
-                        "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
-                        "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY " + sortby +"; ";
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Business business = new Business();
-                            business.business_id = reader.GetString(0);
-                            business.name = reader.GetString(1);
-                            business.address = reader.GetString(2);
-                            business.city = reader.GetString(3);
-                            business.state = reader.GetString(4);
-                            business.zipcode = reader.GetString(5);
-                            business.latitude = reader.GetDouble(6);
-                            business.longitude = reader.GetDouble(7);
-                            business.stars = reader.GetDouble(8);
-                            business.reviewCount = reader.GetInt32(9);
-                            business.isOpen = reader.GetInt32(10);
-                            business.numCheckIns = reader.GetInt32(11);
-                            business.reviewRating = reader.GetDouble(12);
-                            resultsGrid.Items.Add(business);
-
-                            if (user.User_latitude != 0 && user.User_longitude != 0)
-                            {
-                                var businessCoOrds = new GeoCoordinate(business.latitude, business.longitude);
-                                var userCoOrds = new GeoCoordinate(user.User_latitude, user.User_longitude);
-                                var meters = userCoOrds.GetDistanceTo(businessCoOrds);
-                                business.distance = meters / 1609.344;
-                            }
-                        }
-                    }
-                }
-                comm.Close();
-                sb.Clear();
+                updateResultsGrid();
             }
-            numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
+
         }
 
         private void getDays()
@@ -699,6 +752,8 @@ namespace KelLynItTermProject
                 user.User_latitude = Convert.ToDouble(UserLatitudeTextBox.Text);
                 user.User_longitude = Convert.ToDouble(UserLongitudeTextBox.Text);
             }
+            UserLatitudeTextBox.Clear();
+            UserLongitudeTextBox.Clear();
         }
 
         private void resultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -764,15 +819,15 @@ namespace KelLynItTermProject
                 {
                     cmd.Connection = comm;
 
-                        cmd.CommandText = "SELECT DISTINCT close FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' ORDER BY close ASC;";
-                        using (var reader = cmd.ExecuteReader())
+                    cmd.CommandText = "SELECT DISTINCT close FROM hours WHERE dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' ORDER BY close ASC;";
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                toTimeComboBox.Items.Add(reader.GetTimeSpan(0));
-                            }
+                            toTimeComboBox.Items.Add(reader.GetTimeSpan(0));
                         }
-                    
+                    }
+
                 }
                 comm.Close();
             }
@@ -780,75 +835,7 @@ namespace KelLynItTermProject
 
         private void toTimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            using (var comm = new NpgsqlConnection(buildConnString()))
-            {
-                StringBuilder sb = new StringBuilder();
-                comm.Open();
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = comm;
-
-                    if (toTimeComboBox.SelectedIndex > -1 && fromTimeComboBox.SelectedIndex > -1)
-                    {
-                        resultsGrid.Items.Clear();
-                        if (selectedCategoriesListBox.Items.Count >= 1)
-                        {
-                            sb.Append("FROM business WHERE business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[0].ToString() + "') ");
-                            for (int i = 1; i < selectedCategoriesListBox.Items.Count; i++)
-                            {
-                                sb.Append("AND business.business_id IN (SELECT business_id FROM categories WHERE category_name = '" + selectedCategoriesListBox.Items[i].ToString() + "') ");
-                            }
-                        }
-                        else
-                        {
-                            sb.Append("FROM categories WHERE category_name = '" + categoryListBox.SelectedItem.ToString() + "' ");
-                        }
-
-                        string builtString = sb.ToString();
-
-                        //TODO add refining business results query here
-                        //This works on exact open and close....need to fix for inbetween times
-                        cmd.CommandText = "SELECT * from (SELECT * FROM business, (SELECT DISTINCT business_id as busID " + builtString + ") a " +
-                            "WHERE state_code='" + stateList.SelectedItem.ToString() + "' and city='" + cityListBox.SelectedItem.ToString() + "' " +
-                            "and postal_code = '" + zipCodeListBox.SelectedItem.ToString() + "' and a.busID = business.business_id ORDER BY name ASC) as b," +
-                            " hours where dayofweek = '" + dayComboBox.SelectedItem.ToString() + "' and ((open <= CAST " +
-                            "('" + fromTimeComboBox.SelectedItem.ToString() + "' as time) and close >= CAST ('" + toTimeComboBox.SelectedItem.ToString() + "' " +
-                            "as time)) OR (close <= open AND open <= CAST ('" + fromTimeComboBox.SelectedItem.ToString() + "' as time))) and b.business_id = hours.business_id order by b.name ASC";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Business business = new Business();
-                                business.business_id = reader.GetString(0);
-                                business.name = reader.GetString(1);
-                                business.address = reader.GetString(2);
-                                business.city = reader.GetString(3);
-                                business.state = reader.GetString(4);
-                                business.zipcode = reader.GetString(5);
-                                business.latitude = reader.GetDouble(6);
-                                business.longitude = reader.GetDouble(7);
-                                business.stars = reader.GetDouble(8);
-                                business.reviewCount = reader.GetInt32(9);
-                                business.isOpen = reader.GetInt32(10);
-                                business.numCheckIns = reader.GetInt32(11);
-                                business.reviewRating = reader.GetDouble(12);
-                                resultsGrid.Items.Add(business);
-
-                                if (user.User_latitude != 0 && user.User_longitude != 0)
-                                {
-                                    var businessCoOrds = new GeoCoordinate(business.latitude, business.longitude);
-                                    var userCoOrds = new GeoCoordinate(user.User_latitude, user.User_longitude);
-                                    var meters = userCoOrds.GetDistanceTo(businessCoOrds);
-                                    business.distance = meters / 1609.344;
-                                }
-                            }
-                        }
-                    }
-                }
-                comm.Close();
-                sb.Clear();
-            }
-            numBusinessesResult.Text = resultsGrid.Items.Count.ToString();
+            updateResultsGridWithHours();
         }
 
         private void removeFriendButton_Click(object sender, RoutedEventArgs e)
@@ -915,7 +902,14 @@ namespace KelLynItTermProject
                             "', CAST('" + today.Date + "' AS date), '" + reviewText.Text + "', " + Convert.ToDouble(ratingComboBox.SelectedItem.ToString()) + ", 0, 0, 0)";
                         cmd.ExecuteNonQuery();
                         reviewIDIncrementer++;
-                        updateResultsGrid();
+                        if (toTimeComboBox.SelectedIndex > -1 && fromTimeComboBox.SelectedIndex > -1)
+                        {
+                            updateResultsGridWithHours();
+                        }
+                        else
+                        {
+                            updateResultsGrid();
+                        }
                     }
                     comm.Close();
                 }
@@ -952,7 +946,7 @@ namespace KelLynItTermProject
             string timeOfDayInts = "1, 0, 0, 0";
             string timeOfDay = "morning";
 
-            if(time.Hours >= 6 && time.Hours < 12)
+            if (time.Hours >= 6 && time.Hours < 12)
             {
                 timeOfDay = "morning";
                 timeOfDayInts = "1, 0, 0, 0";
@@ -985,7 +979,14 @@ namespace KelLynItTermProject
                         "INSERT into checkins(day, business_id, morning, afternoon, evening, night) VALUES('" + day.ToString() + "', '" + ((Business)resultsGrid.SelectedItem).business_id
                             + "', " + timeOfDayInts + ") ON CONFLICT ON CONSTRAINT checkins_pkey DO UPDATE SET " + timeOfDay + " = checkins." + timeOfDay + " + 1";
                         cmd.ExecuteNonQuery();
-                        updateResultsGrid();
+                        if (toTimeComboBox.SelectedIndex > -1 && fromTimeComboBox.SelectedIndex > -1)
+                        {
+                            updateResultsGridWithHours();
+                        }
+                        else
+                        {
+                            updateResultsGrid();
+                        }
                     }
                     comm.Close();
                 }
